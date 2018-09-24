@@ -24,7 +24,7 @@
         {% endif %}
         {% if user.is_authenticated %}
           {% if user.is_customer %}
-          <a class="nav-link" href="{% url 'basic_app:customer_search' %}">You are customer</a>
+          <a class="nav-link" href="{% url 'basic_app:customer_search' %}">Customer Invoice Search</a>
           {% elif user.is_staffInChina %}
           <a class="nav-link" href="{% url 'login' %}">You are staffInChina</a>
           {% elif user.is_staffInUSA %}

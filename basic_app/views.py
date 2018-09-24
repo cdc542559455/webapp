@@ -26,6 +26,18 @@ def user_login(request):
 
     return render(request,'registration/login.html')
 
-@method_decorator([login_required, customer_required], name='dispatch')
-class CostomerSearch(TemplateView):
-    template_name = 'basic_app/customer_search.html'
+@login_required
+@customer_required
+def CustomerSearch(request):
+    hasPost = False
+    if request.method == 'POST':
+        value = request.POST.get('orderNumber')
+        firstname = request.POST.get('firstName')
+        lastname = request.POST.get('lastName')
+        print("The Order Number is:"+str(value))
+        print("The firstName is:"+str(firstname))
+        print("The lastname is:"+str(lastname))
+    else:
+        print("Is not Post")
+    
+    return render(request, 'basic_app/customer_search.html')

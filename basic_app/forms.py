@@ -42,4 +42,3 @@ class StaffSignUpChangeForm(UserChangeForm):
     class Meta:
         model = CustomUser
         fields = ( 'email' , 'username', 'user_type', )
-
