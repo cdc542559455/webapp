@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Base</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+    integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Notable" rel="stylesheet">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="navbar-nav">
+        {# Django Home Link / Admin Link / Register Link#}
+        <a class="navbar-brand" href="{% url 'home' %}">System Home</a>
+        <a class="nav-item nav-link" href="{% url 'admin:index' %}">Admin</a>
+        <a class="nav-item nav-link" href="{% url 'basic_app:signup' %}">signup</a>
+
+        {# Some logic on what to display for last item#}
+        {% if user.is_authenticated %}
+          <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+        {% else %}
+          <a class="nav-link" href="{% url 'login' %}">Login</a>
+        {% endif %}
+        {% if user.is_authenticated %}
+          {% if user.is_customer %}
+          <a class="nav-link" href="{% url 'basic_app:customer_search' %}">You are customer</a>
+          {% elif user.is_staffInChina %}
+          <a class="nav-link" href="{% url 'login' %}">You are staffInChina</a>
+          {% elif user.is_staffInUSA %}
+          <a class="nav-link" href="{% url 'login' %}">You are staffInUSA</a>
+          {% else %}
+          <a class="nav-link" href="{% url 'login' %}">You are supervisor</a>
+          {% endif %}
+        {% else %}
+          <a class="nav-link" href="{% url 'login' %}">No Account</a>
+        {% endif %}
+
+      </div>
+    </nav>
+
+    <div class="container">
+    {% block body_block %}
+    {% endblock %}
+    </div>
+
+
+  </body>
+</html>

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block body_block %}
+
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4" >Order System</h1>
+    {% if user.is_authenticated %}
+    <p class="lead">Welcome {{ user.username }}!</p>
+    {% else %}
+    <p class="lead">Welcome to the site!</p>
+    {% endif %}
+    <p>This system will help you track order information or manage order, invoices and proof</p>
+  </div>
+</div>
+</div><!-- /.container -->
+
+<div class="container">
+  <h3>Order and Delivery</h3>
+  <div class="row">
+    <div class="col-lg-3 col-4 px-0"><img class="img-thumbnail img-fluid" src="https://i.imgur.com/FKqYk7W.jpg"}} alt=""></div>
+    <div class="col-lg-3 col-4 px-0"><img class="img-thumbnail img-fluid" src="https://i.imgur.com/BFSgg4s.jpg" alt=""></div>
+    <div class="col-lg-3 col-4 px-0"><img class="img-thumbnail img-fluid" src="https://i.imgur.com/sPgjxtX.jpg" alt=""></div>
+    <div class="col-lg-3 col-4 px-0"><img class="img-thumbnail img-fluid" src="https://i.imgur.com/nidxvqv.jpg" alt=""></div>
+    <div class="col-lg-3 col-4 px-0"><img class="img-thumbnail img-fluid" src="https://i.imgur.com/3Bjf65L.jpg" alt=""></div>
+    <div class="col-lg-3 col-4 px-0"><img class="img-thumbnail img-fluid" src="https://d2lm6fxwu08ot6.cloudfront.net/img-thumbs/960w/C5Y10KIIHA.jpg" alt=""></div>
+  </div>
+</div><!-- /.container -->
+
+
+{% endblock %}
