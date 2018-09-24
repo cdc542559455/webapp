@@ -3,10 +3,10 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import CustomUser
 from django.db import transaction
 from django.db import models
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from crispy_forms.bootstrap import Field, InlineRadios, TabHolder, Tab
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Div, Fieldse
+from crispy_forms.layout import Submit, Layout, Div, Fieldset
 
 
 class StaffSignUpForm(UserCreationForm):
