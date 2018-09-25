@@ -65,7 +65,7 @@ def customerQueryInvoice(invoiceNumber):
                         total += float(price[3])
                 return x, y, total
         else:
-                return None, None
+                return None, None, None
 
 
 def uploadToS3(path):
