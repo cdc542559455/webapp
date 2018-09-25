@@ -24,7 +24,6 @@
           {% elif user.is_staffInChina %}
             <a class="nav-link" href="{% url 'login' %}">You are staffInChina</a>
           {% elif user.is_staffInUSA %}
-            <a class="nav-link" href="{% url 'login' %}">You are staffInUSA</a>
           {% else %}
             <a class="nav-link" href="{% url 'login' %}">You are supervisor</a>
           {% endif %}
@@ -34,7 +33,7 @@
           {% elif user.is_staffInChina %}
             <a class="nav-link" href="{% url 'login' %}">You are staffInChina</a>
           {% elif user.is_staffInUSA %}
-            <a class="nav-link" href="{% url 'login' %}">You are staffInUSA</a>
+            <a class="nav-link" href="{% url 'basic_app:StaffInUSAMangement' %}">Staff in USA management board</a>
           {% else %}
             <a class="nav-link" href="{% url 'login' %}">You are supervisor</a>
           {% endif %}

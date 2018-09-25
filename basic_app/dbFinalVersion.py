@@ -206,7 +206,65 @@ def employeeScanOrder():
                         for k, v in r.items() :
                                 print (k + ": " + str(v)) 
                         print()
-                        
+
+
+def partialEmployeeScanInvoice():
+    # load "Invoice" table
+    dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
+    table = dynamodb.Table('Invoice')
+    result = []
+    if not len(table.scan()['Items']) == 0:
+        for r in table.scan()['Items']:
+            # total Amount
+            total = 0.00            
+            oneInvoice = []
+            print("Invoice #: " + r["Invoice #"])
+            print("Invoice Date: " + r["Invoice Date"])
+            if (len(r["Details"]) != 0):
+                for l in r["Details"]:
+                    total += float(l[3])
+            print("Total: " + str("%.2f" % total))
+            print()
+            oneInvoice.append(r["Invoice #"])
+            oneInvoice.append(r["Invoice Date"])
+            oneInvoice.append(str("%.2f" % total))
+            result.append(oneInvoice)
+    else:
+        print("No result found")  
+    print(result)
+    return result
+
+def partialEmployeeScanProof():
+    dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
+    table = dynamodb.Table('Proof')     
+    result = []
+    if not len(table.scan()['Items']) == 0:
+        for r in table.scan()['Items']:
+            oneProof = []
+            oneProof.append(str(r['PO Number']))
+            oneProof.append(str(r['Item Number']))
+            oneProof.append(str(r['Quantity']))
+            result.append(oneProof)
+            print("PO Number: " + str(r['PO Number']))
+            print("Item Number: " + str(r['Item Number']))
+            print("Quantity: " + str(r['Quantity']))
+            print()      
+    print(result)
+    return result
+
+def partialEmployeeScanOrder():
+    dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
+    table = dynamodb.Table('Order')   
+    result = []
+    if not len(table.scan()['Items']) == 0:
+        for r in table.scan()['Items']:
+                oneOrder = []
+                oneOrder.append(str(r['Order Number']))
+                oneOrder.append(str(r['Customer Name']))
+                oneOrder.append(str(r['Delivery Address']))
+                result.append(oneOrder)
+    print(result)
+    return result  
 '''
 Fake order:
 1. Order#: 555, orderDate: 9-24-2018, inHandDate: 9-28-2018, shippingMethod: AIR, deliverAddr: 8010 NE, nexusIdentityItemNum: 1
@@ -227,9 +285,10 @@ if __name__ == '__main__':
         # customerQueryProof("100")
         # print('----------------------------------------------')
         # customerQueryInvoice("666")
-        x,y = customerQueryInvoice("666")
-        print(x)
-        print(y)
+        # x,y = customerQueryInvoice("666")
+        # print(x)
+        # print(y)
+        partialEmployeeScanOrder()
         print("hello word")
         # customerQueryProof("100")
         # print('----------------------------------------------')

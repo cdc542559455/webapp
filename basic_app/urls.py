@@ -10,4 +10,5 @@ urlpatterns=[
     path('signup/',views.SignUp.as_view(),name='signup'),
     path('CustomerProofSearch/', views.CustomerProofSearch, name='CustomerProofSearch'),
     path('CustomerInvoiceSearch/', views.CustomerInvoiceSearch, name='CustomerInvoiceSearch'),
+    path('StaffInUSAMangement/', views.CustomerInUSAOrderPage, name='StaffInUSAMangement')
 ]

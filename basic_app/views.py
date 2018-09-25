@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.views import generic
 from django.views.generic import CreateView, ListView, UpdateView, TemplateView
-from .dbFinalVersion import customerQueryProof, customerQueryInvoice
+from .dbFinalVersion import customerQueryProof, customerQueryInvoice, partialEmployeeScanOrder
 # Create your views here.
 def home(request):
     return render(request,'basic_app/home.html')
@@ -50,8 +50,8 @@ def CustomerProofSearch(request):
 @login_required
 @customer_required
 def CustomerInvoiceSearch(request):
-    dic = {'like':'you', 'yes':'we are good'}
-    list1 = [[1,2,3,4],[4,2,3,1]]
+    dic = None
+    list1 = None
     totalamout = 0
     hasPost = False
     if request.method == 'POST':
@@ -63,3 +63,16 @@ def CustomerInvoiceSearch(request):
         print('Is not Post FFFF')
 
     return render(request, 'basic_app/customer_invoice_search.html', {'hasPost': hasPost, 'dic':dic, 'list1': list1, 'totalamout': totalamout} )
+
+@login_required
+@staffInUSA_required
+def CustomerInUSAOrderPage(request):
+    list_all_order = None
+    if request.method == 'POST':
+        # to add new row order
+        pass
+    else:
+        list_all_order = partialEmployeeScanOrder()
+    return render(request, 'basic_app/staff_in_usa_order_page.html', {'list_all_order':list_all_order })
+
+    
