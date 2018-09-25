@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
     integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Notable" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -24,6 +25,7 @@
           {% elif user.is_staffInChina %}
             <a class="nav-link" href="{% url 'login' %}">You are staffInChina</a>
           {% elif user.is_staffInUSA %}
+          <a class="nav-link" href="{% url 'basic_app:OrderCreating' %}">Order Create</a>
           {% else %}
             <a class="nav-link" href="{% url 'login' %}">You are supervisor</a>
           {% endif %}

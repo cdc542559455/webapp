@@ -75,4 +75,11 @@ def CustomerInUSAOrderPage(request):
         list_all_order = partialEmployeeScanOrder()
     return render(request, 'basic_app/staff_in_usa_order_page.html', {'list_all_order':list_all_order })
 
-    
+@login_required
+@staffInUSA_required
+def OrderCreatePage(request):
+    if request.method == 'POST':
+        pass
+    else:
+        pass
+    return render(request, 'basic_app/order_create.html')
