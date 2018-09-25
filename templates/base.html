@@ -17,23 +17,35 @@
         <a class="nav-item nav-link" href="{% url 'basic_app:signup' %}">signup</a>
 
         {# Some logic on what to display for last item#}
+   
+        {% if user.is_authenticated %}
+          {% if user.is_customer %}
+            <a class="nav-link" href="{% url 'basic_app:CustomerProofSearch' %}">Customer Proof Search</a>
+          {% elif user.is_staffInChina %}
+            <a class="nav-link" href="{% url 'login' %}">You are staffInChina</a>
+          {% elif user.is_staffInUSA %}
+            <a class="nav-link" href="{% url 'login' %}">You are staffInUSA</a>
+          {% else %}
+            <a class="nav-link" href="{% url 'login' %}">You are supervisor</a>
+          {% endif %}
+          
+          {% if user.is_customer %}
+            <a class="nav-link" href="{% url 'basic_app:CustomerInvoiceSearch' %}">Customer Invoice Search</a>
+          {% elif user.is_staffInChina %}
+            <a class="nav-link" href="{% url 'login' %}">You are staffInChina</a>
+          {% elif user.is_staffInUSA %}
+            <a class="nav-link" href="{% url 'login' %}">You are staffInUSA</a>
+          {% else %}
+            <a class="nav-link" href="{% url 'login' %}">You are supervisor</a>
+          {% endif %}
+
+        {% else %}
+
+        {% endif %}
         {% if user.is_authenticated %}
           <a class="nav-link" href="{% url 'logout' %}">Logout</a>
         {% else %}
           <a class="nav-link" href="{% url 'login' %}">Login</a>
-        {% endif %}
-        {% if user.is_authenticated %}
-          {% if user.is_customer %}
-          <a class="nav-link" href="{% url 'basic_app:customer_search' %}">Customer Invoice Search</a>
-          {% elif user.is_staffInChina %}
-          <a class="nav-link" href="{% url 'login' %}">You are staffInChina</a>
-          {% elif user.is_staffInUSA %}
-          <a class="nav-link" href="{% url 'login' %}">You are staffInUSA</a>
-          {% else %}
-          <a class="nav-link" href="{% url 'login' %}">You are supervisor</a>
-          {% endif %}
-        {% else %}
-          <a class="nav-link" href="{% url 'login' %}">No Account</a>
         {% endif %}
 
       </div>

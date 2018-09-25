@@ -1,3 +1,4 @@
+import itertools
 from django.shortcuts import render, get_object_or_404, redirect, render
 from .forms import StaffSignUpForm
 from django.utils.decorators import method_decorator
@@ -11,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.views import generic
 from django.views.generic import CreateView, ListView, UpdateView, TemplateView
-
+from .dbFinalVersion import customerQueryProof, customerQueryInvoice
 # Create your views here.
 def home(request):
     return render(request,'basic_app/home.html')
@@ -26,18 +27,39 @@ def user_login(request):
 
     return render(request,'registration/login.html')
 
+
 @login_required
 @customer_required
-def CustomerSearch(request):
+def CustomerProofSearch(request):
+    pic_src = None
+    dic = None
     hasPost = False
     if request.method == 'POST':
-        value = request.POST.get('orderNumber')
-        firstname = request.POST.get('firstName')
-        lastname = request.POST.get('lastName')
-        print("The Order Number is:"+str(value))
-        print("The firstName is:"+str(firstname))
-        print("The lastname is:"+str(lastname))
+        value = str(request.POST.get('orderNumber'))
+        hasPost = True
+        dic = customerQueryProof(value)
+        if (dic != None):
+            pic_src = dic['Attached_picture']
+            dic = dict(itertools.islice(dic.items(),1, len(dic)))
     else:
         print("Is not Post")
     
-    return render(request, 'basic_app/customer_search.html')
+    return render(request, 'basic_app/customer_proof_search.html',{'hasPost': hasPost, 'dic':dic, 'pic_src':pic_src} )
+
+
+@login_required
+@customer_required
+def CustomerInvoiceSearch(request):
+    dic = {'like':'you', 'yes':'we are good'}
+    list1 = [[1,2,3,4],[4,2,3,1]]
+    totalamout = 0
+    hasPost = False
+    if request.method == 'POST':
+        value = str(request.POST.get('invoiceNumber'))
+        dic, list1, totalamout = customerQueryInvoice(value)
+        print(totalamout)
+        hasPost = True
+    else:
+        print('Is not Post FFFF')
+
+    return render(request, 'basic_app/customer_invoice_search.html', {'hasPost': hasPost, 'dic':dic, 'list1': list1, 'totalamout': totalamout} )

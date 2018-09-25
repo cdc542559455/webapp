@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block body_block %}
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4">Get your Invoice</h1>
+    <p class="lead">Please enter your Invoice number </p>
+  </div><!-- /.jumbotron -->
+  {% if hasPost %}
+    {% if dic == None %}
+      <p>You don't have any voice</p>
+      {% else %}
+        <table class = "table table-striped">
+            <thead class="thead-dark" >
+              <tr>
+                <th scope="col">Information</th>
+                <th scope="col">Detail</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for key, values in dic.items %}
+                <tr>
+                  <td>{{key}}</td>
+                  <td>{{values}}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+        </table>
+        <table class = "table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">QTY</th>
+                    <th scope="col">DESCRIPTION</th>
+                    <th scope="col">UNIT PRICE</th>
+                    <th scope="col">AMOUNT</th>
+                </tr>
+                </thead>
+                <tbody>
+                  {% for lit in list1 %}
+                    <tr>
+                        {% for l in lit %}
+                            <td>{{l}}</td>
+                        {% endfor %}
+                    </tr>
+                  {% endfor %}
+                </tbody>
+            </table>
+            <table class = "table table-bordered">
+                    <thead >
+                      <tr>
+                        <th scope="col">Total Amount:</th>
+                        <th>{{totalamout}}</th>
+                      </tr>
+                    </thead>
+                </table>
+      {% endif %}
+  {% else %}
+  <form method='post' action="{% url 'basic_app:CustomerInvoiceSearch' %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="OrderNumber">Order Number</label>
+        <input type="number" class="form-control" i name="invoiceNumber" placeholder="Invoice Number" required>
+      </div>
+      <button type="submit" class="btn btn-default">Search</button>
+  </form>
+  {% endif %}
+</div><!-- /.container -->
+
+{% endblock %}

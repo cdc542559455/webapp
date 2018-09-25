@@ -8,5 +8,6 @@ app_name = 'basic_app'
 # Be careful setting the name to just /login use userlogin instead!
 urlpatterns=[
     path('signup/',views.SignUp.as_view(),name='signup'),
-    path('customer_search/', views.CustomerSearch, name='customer_search')
+    path('CustomerProofSearch/', views.CustomerProofSearch, name='CustomerProofSearch'),
+    path('CustomerInvoiceSearch/', views.CustomerInvoiceSearch, name='CustomerInvoiceSearch'),
 ]
