@@ -40,12 +40,16 @@
                             <span class="glyphicon glyphicon-pencil"></span> Edit
                         </button>
                         </form>
-                        <form action=""method="GET"></form>
-                        <button type="button"
+                    </td>
+                    <td>
+                        <form action=""method="POST">
+                        {% csrf_token %}
+                        <button type="submit"
                                 class="btn btn-danger btn-sm js-delete-order"
                                 data-url="#">
                           <span class="glyphicon glyphicon-trash"></span> Delete
                         </button>
+                      </form>
                       </td>
                     </tr>
                   {% empty %}

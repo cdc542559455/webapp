@@ -10,7 +10,7 @@
   <p class="lead" id="myp">Order form and information :</p>
 </div>
 
-<form action="#" method="post" id="post_form">
+<form action="{% url 'basic_app:OrderCreating' %}" method="POST" id="post_form">
         {% csrf_token %}
         <label for="npc_form">Forms: </label>
         <table class="table table-bordered" >
@@ -70,10 +70,6 @@
                     <td><input type="text" name = "12"></td>
                 </tr>
                 <tr>
-                    <td>Customer Name</td>
-                    <td><input type="text" name = "13"></td>
-                </tr>
-                <tr>
                     <td>P.O. number</td>
                     <td><input type="text" name = "13"></td>
                 </tr>
@@ -87,7 +83,7 @@
         </br>
         </br>
         <!-- comment this out to actually submit -->
-        <input type="button" class="btn btn-dark float-right" value="Submit">
+        <input type="submit" class="btn btn-dark float-right" value="Submit">
     
         <!-- uncomment this to actually submit -->
         <!-- <input type="submit" value="Submit"> -->

@@ -79,8 +79,18 @@ def CustomerInUSAOrderPage(request):
 @staffInUSA_required
 def OrderCreatePage(request):
     if request.method == 'POST':
-        #todo something
-        pass
+        orderID = request.POST.get('orderID', '-1')
+        input = request.POST.dict()
+        print(type(orderID))
+        if(orderID == '-1'):
+            print("yes")
+            listInput = list(input.values())
+            listInput = listInput.pop(0)
+            print(listInput)
+            print(listInput)
+            print(type(listInput))
+        else:
+            pass
     else:
         pass
     return render(request, 'basic_app/order_create.html')
@@ -88,8 +98,11 @@ def OrderCreatePage(request):
 @login_required
 @staffInUSA_required
 def CreateInvoice(request):
+    result = None
     if request.method == 'POST':
+        print("You Succeed!")
         pass
     else:
         pass
-    return render(request, 'basic_app/staff_in_usa_create_invoice.html')
+    return render(request, 'basic_app/staff_in_usa_create_invoice.html', {'result':result})
+

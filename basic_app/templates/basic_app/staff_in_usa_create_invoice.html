@@ -9,7 +9,81 @@
     <h2 id = "myh2">Create or Update Invoice</h2>
     <p class="lead" id="myp">Invoice form and information :</p>
 </div>
+<form action="{% url 'basic_app:InvoiceCreate' %}" method="POST" >
+    {% csrf_token %}
+    <table class = "table table-bordered" >
+        <thead class="thead-dark" >
+            <tr>
+                <th scope="col">Shiip From</th>
+                <th scope="col">Ship To</th>
+                <th scope="col">Package Information</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    City <input type="text" name="fromCity"> 
+                </td>
+                <td>
+                    City <input type="text"name="toCity">
+                </td>
+                <td>
+                    Lenth <input type="text" name="length" required>
+                </td>
+                </tr>
+                <tr>
+                    <td>
+                    State <input type="text" name="fromState">
+                </td>
+                    <td>
+                    State <input type="text" name="toState">
+                    </td>
+                    <td>Width <input type="text" name="width" required></td>
+                </tr>
+                    <tr>
+                        <td>
+                            Country Code <input type="text" name="fromCountry" required>
+                        </td>
+                        <td>
+                            Country Code <input type="text" name="toCountry" required>
+                        </td>
+                        <td>Height <input type="text" name="height" required></td>
+                    </tr>
+                    <tr>
+                        <td>Zip Code <input type="text" name="fromZip" required></td>
+                        <td>Zip Code <input type="text" name="toZip" required></td>
+                        <td>Number of Package <input type="number" name="nop" required></td>
+                    </tr>
+                    <tr>
+                        <td>Status <select name="isFromResidential" >
+                            <option value="residential">residential</option>
+                            <option value="commercial">commercial</option>
+                        </select></td>
+                        <td>Status  <select name="isToResidential" >
+                                <option value="residential">residential</option>
+                                <option value="commercial">commercial</option>
+                        </select></td>
+                        <td>Pickup Date <input type="date", name="pcd"></td>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td>Delivered Date <input type="date", name="dd"></td>
+                    </tr>
+            </tr>
+        </tbody>
+    </table>
+    <div class="container border">
+            <div class="row border ">
+                <div class="col border" align="cerntered">Result :</div>
+                <div class="col-10 mh-100 border">{{result}}</div>
+            </div>
+    </div>
+</br>
+    <button class="btn btn-success float-right" type="submit">USP Quota</button>
+</form>
 
+</br>
+</br>
 <form action="#" method="post" id="post_form">
         {% csrf_token %}
         <label for="npc_form">New Order: </label>
