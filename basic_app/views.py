@@ -79,7 +79,17 @@ def CustomerInUSAOrderPage(request):
 @staffInUSA_required
 def OrderCreatePage(request):
     if request.method == 'POST':
+        #todo something
         pass
     else:
         pass
     return render(request, 'basic_app/order_create.html')
+
+@login_required
+@staffInUSA_required
+def CreateInvoice(request):
+    if request.method == 'POST':
+        pass
+    else:
+        pass
+    return render(request, 'basic_app/staff_in_usa_create_invoice.html')

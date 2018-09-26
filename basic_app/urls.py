@@ -11,5 +11,6 @@ urlpatterns=[
     path('CustomerProofSearch/', views.CustomerProofSearch, name='CustomerProofSearch'),
     path('CustomerInvoiceSearch/', views.CustomerInvoiceSearch, name='CustomerInvoiceSearch'),
     path('StaffInUSAMangement/', views.CustomerInUSAOrderPage, name='StaffInUSAMangement'),
-    path('OrderCreating/', views.OrderCreatePage, name='OrderCreating')
+    path('OrderCreating/', views.OrderCreatePage, name='OrderCreating'),
+    path('InvoiceCreate/', views.CreateInvoice, name='InvoiceCreate')
 ]
