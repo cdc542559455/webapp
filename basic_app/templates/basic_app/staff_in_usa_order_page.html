@@ -31,11 +31,16 @@
                     <td>{{subitem}}</td>
                   {% endfor %}
                   <td style="width: 150px">
-                        <button type="button"
-                                class="btn btn-warning btn-sm js-update-order"
-                                data-url="#">
-                          <span class="glyphicon glyphicon-pencil"></span> Edit
+                        <form action="{% url 'basic_app:OrderCreating' %}" method="POST">
+                            {% csrf_token %}
+                          <input type="hidden" value="{{order.0}}" name="orderID">
+                            <button type="submit"
+                            class="btn btn-warning btn-sm js-update-order"
+                            data-url="#">
+                            <span class="glyphicon glyphicon-pencil"></span> Edit
                         </button>
+                        </form>
+                        <form action=""method="GET"></form>
                         <button type="button"
                                 class="btn btn-danger btn-sm js-delete-order"
                                 data-url="#">

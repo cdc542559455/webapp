@@ -1,10 +1,15 @@
 function addRow() {
     var parent = document.getElementById("mytbody");
+    var row = parent.childElementCount;
+    var nameRIght = 2*row - 14;
+    var nameLeft = nameRIght - 1;
     var newRow = document.createElement("TR");
     var newTH = document.createElement("TH");
     var newTH2 = document.createElement("TH");
     var newInput = document.createElement("INPUT");
     var newInput2 = document.createElement("INPUT");
+    newInput.setAttribute("name",nameLeft);
+    newInput2.setAttribute("name", nameRIght);
     newTH.appendChild(newInput);
     newTH2.appendChild(newInput2);
     newRow.appendChild(newTH);
