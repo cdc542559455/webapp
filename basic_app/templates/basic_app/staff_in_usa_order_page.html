@@ -25,10 +25,10 @@
           </tr>
         </thead>
         <tbody>
-           {% for order in list_all_order %}
+            {% for order in list_all_order %}
                 <tr>
                   {% for subitem in order %}
-                   <td>{{subitem}}</td>
+                    <td>{{subitem}}</td>
                   {% endfor %}
                   <td style="width: 150px">
                         <button type="button"
@@ -42,7 +42,7 @@
                           <span class="glyphicon glyphicon-trash"></span> Delete
                         </button>
                       </td>
-                   </tr>
+                    </tr>
                   {% empty %}
                   <tr>
                       <td colspan="8" class="text-center bg-warning">No order</td>

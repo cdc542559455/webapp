@@ -6,90 +6,79 @@
     <script src="{% static 'js/staff_in_USA.js' %}"></script>
 {% endblock %}
 <div class="jumbotron">
-  <h2 id = "myh2">Create or Update form</h2>
-  <p class="lead" id="myp">Invoice form and information :</p>
+    <h2 id = "myh2">Create or Update Invoice</h2>
+    <p class="lead" id="myp">Invoice form and information :</p>
 </div>
 
 <form action="#" method="post" id="post_form">
         {% csrf_token %}
-        <label for="npc_form">Forms: </label>
+        <label for="npc_form">New Order: </label>
         <table class="table table-bordered" >
-            <thead>
-                <tr >
-                    <th scope="col">Attributes</td>
-                    <th scope="col"> Value</td>
-                </tr>
-            </thead>
             <tbody id = "mytbody">
                 <tr>
-                    <td>Order Number</td>
+                    <td>Invoice #</td>
                     <td><input type="text" name = "1"></td>
                 </tr>
                 <tr>
-                    <td>Order Date</td>
+                    <td>Invoice Date</td>
                     <td><input type="text" name = "2"></td>
                 </tr>
                 <tr>
-                    <td>In Hand Date</td>
+                    <td>P.O.#</td>
                     <td><input type="text" name = "3"></td>
                 </tr>
                 <tr>
-                    <td>Shipping Method</td>
+                    <td>Bill To</td>
                     <td><input type="text" name = "4"></td>
                 </tr>
                 <tr>
-                    <td>Deliver Address</td>
+                    <td>Ship To</td>
                     <td><input type="text" name = "5"></td>
                 </tr>
                 <tr>
-                    <td>Item Number</td>
+                    <td>Due Date</td>
                     <td><input type="text" name = "6"></td>
                 </tr>
                 <tr>
-                    <td>Materials</td>
+                    <td>Customer Name</td>
                     <td><input type="text" name = "7"></td>
                 </tr>
+                
+            </tbody>
+        </table>
+            <input type="button" align="right" class="btn btn-primary float-right" value="Add New Row" onclick="addRow();" id="add-row">
+        </br>
+        </br>
+        
+        <table class="table table-bordered" >
+            <thead>
+                <tr >
+                    <th scope="col">QTY</td>
+                    <th scope="col">DESCRIPTION</td>
+                    <th scope="col">UNIT PRICE</th>
+                </tr>
+            </thead>
+            <tbody id = "detailbody">
                 <tr>
-                    <td>Quantity</td>
                     <td><input type="text" name = "8"></td>
-                </tr>
-                <tr>
-                    <td>Product Color</td>
                     <td><input type="text" name = "9"></td>
-                </tr>
-                <tr>
-                    <td>Product Method</td>
                     <td><input type="text" name = "10"></td>
-                </tr>
-                <tr>
-                    <td>Product Color</td>
-                    <td><input type="text" name = "11"></td>
-                </tr>
-                <tr>
-                    <td>Customer Name</td>
-                    <td><input type="text" name = "12"></td>
-                </tr>
-                <tr>
-                    <td>Customer Name</td>
-                    <td><input type="text" name = "13"></td>
-                </tr>
-                <tr>
-                    <td>P.O. number</td>
-                    <td><input type="text" name = "13"></td>
-                </tr>
-                <tr>
-                    <td>Design Graph</td>
-                    <td><input type="file" name ="14" accept="image/"></td>
                 </tr>
             </tbody>
         </table>
-         <input type="button" align="right" class="btn btn-primary float-right" value="Add New Row" onclick="addRow();" id="add-row">
+        <input type="button" align="right" class="btn btn-primary float-right" value="Add New Row" onclick="addDetail();" id="add-row">
         </br>
         </br>
+        </br>
+
         <!-- comment this out to actually submit -->
         <input type="button" class="btn btn-dark float-right" value="Submit">
     
         <!-- uncomment this to actually submit -->
         <!-- <input type="submit" value="Submit"> -->
-  </form>
+    </form>
+     </br>
+    </br>
+    </br>
+    </br>
 {% endblock %}
