@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.views import generic
 from django.views.generic import CreateView, ListView, UpdateView, TemplateView
-from .dbFinalVersion import customerQueryProof, customerQueryInvoice, partialEmployeeScanOrder, customerQueryOrder, showFullOrder, ChinaEmployeeUpdatePicture, generateOrUpdateOrderAndProof
+from .dbFinalVersion import customerQueryProof, customerQueryInvoice, partialEmployeeScanOrder, customerQueryOrder, showFullOrder, ChinaEmployeeUpdatePicture, generateOrUpdateOrderAndProof, partialEmployeeScanInvoice, partialEmployeeScanProof
 import itertools
 
 # Create your views here.
@@ -131,14 +131,22 @@ def OrderCreatePage(request):
 
 @login_required
 @staffInUSA_required
-def CreateInvoice(request):
-    result = None
+def CreateInvoice(request): 
     if request.method == 'POST':
-        print("You Succeed!")
         pass
     else:
         pass
-    return render(request, 'basic_app/staff_in_usa_create_invoice.html', {'result':result})
+    return render(request, 'basic_app/staff_in_usa_create_invoice.html')
+
+@login_required
+@staffInUSA_required
+def invoiceCreatePage(request):
+    listofInvoices = None
+    if request.method == "POST":
+        pass
+    else:
+        listofInvoices = partialEmployeeScanInvoice()    
+    return render(request, 'basic_app/staff_in_USA_invoice_manage.html', {'listofInvoices':listofInvoices})
 
 @login_required
 @staffInChina_required
@@ -183,3 +191,13 @@ def StaffInChinaOrderInDetails(request):
 
     return render(request, 'basic_app/staff_in_China_order_detail.html', {'dic':dic, 'pic_src':pic_src} )
 
+@login_required
+@supervisor_required
+def SupervisorProofView(request):
+    listOfProof = None
+    if request.method  == 'POST':
+        pass
+    else:
+        listOfProof = partialEmployeeScanProof()
+
+    return render(request, 'basic_app/supervisor_proof_view.html', {'listOfProof':listOfProof})

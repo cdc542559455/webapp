@@ -24,16 +24,16 @@
           {% elif user.is_staffInChina %}
             <a class="nav-link" href="{% url 'basic_app:StaffInChinaManagement' %}">Staff in China Management Board</a>
           {% elif user.is_staffInUSA %}
-          <a class="nav-link" href="{% url 'basic_app:InvoiceCreate' %}">Invoice Create</a>
+          <a class="nav-link" href="{% url 'basic_app:StaffInUSAInvoicemangement' %}">Invoice Management Board</a>
           {% else %}
-            <a class="nav-link" href="{% url 'login' %}">You are supervisor</a>
+            <a class="nav-link" href="{% url 'basic_app:SupervisorProofView' %}">View Proof</a>
           {% endif %}
           
           {% if user.is_customer %}
             <a class="nav-link" href="{% url 'basic_app:CustomerInvoiceSearch' %}">Customer Invoice Search</a>
           {% elif user.is_staffInChina %}
           {% elif user.is_staffInUSA %}
-            <a class="nav-link" href="{% url 'basic_app:StaffInUSAMangement' %}">Staff in USA Management Board</a>
+            <a class="nav-link" href="{% url 'basic_app:StaffInUSAMangement' %}">Order Management Board</a>
           {% else %}
             <a class="nav-link" href="{% url 'login' %}">You are supervisor</a>
           {% endif %}

@@ -398,6 +398,6 @@ if __name__ == '__main__':
         # print(y)
         # l = list(range(5,10))
         # print(l)
-        generateOrUpdateOrderAndProof(["333333sss", "9-24-2018", "9-28-2018", "AIR", "230120 8th AVE SE", "IBN-300", "10oz", "wood", "100", "red", "wtf", "blue",
-	                      "Alex Xie", "100", "C:\\Users\\lokic\\OneDrive\\desktop\\Actual_Project\\webapp\\googluck.jpg", { "tryAdd":"YES", "tryAdd2":"WORKED"}])
-	
+        # generateOrUpdateOrderAndProof(["333333sss", "9-24-2018", "9-28-2018", "AIR", "230120 8th AVE SE", "IBN-300", "10oz", "wood", "100", "red", "wtf", "blue",
+	#                       "Alex Xie", "100", "C:\\Users\\lokic\\OneDrive\\desktop\\Actual_Project\\webapp\\googluck.jpg", { "tryAdd":"YES", "tryAdd2":"WORKED"}])
+	partialEmployeeScanProof()

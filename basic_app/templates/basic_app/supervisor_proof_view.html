@@ -2,15 +2,9 @@
 {% block body_block %}
 <div class="container">
   <div class="jumbotron">
-    <h1 class="display-4">This page for staff in USA mangament</h1>
+    <h1 class="display-4">This page for proof view </h1>
     <p class="lead">Items below are all invoices in our systems </p>
   </div><!-- /.jumbotron -->
-
-  <p>
-      <form action="{% url 'basic_app:InvoiceCreate' %}">
-        <input value=" New Invoice" class="btn btn-primary js-create-order" type="submit">
-      </form>
-  </p>
     
 
 
@@ -18,16 +12,16 @@
   <table class = "table table-striped">
         <thead>
           <tr>
-            <th scope="col">Invoice Number</th>
-            <th scope="col">Invoice Date</th>
-            <th scope="col">Invoice Total Amount</th>
+            <th scope="col">PO Number</th>
+            <th scope="col">Item Number</th>
+            <th scope="col">Quantity</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-            {% for invoice in listofInvoices %}
+            {% for proof in listOfProof %}
                 <tr>
-                  {% for subitem in invoice %}
+                  {% for subitem in proof %}
                     <td>{{subitem}}</td>
                   {% endfor %}
                   <td style="width: 150px">

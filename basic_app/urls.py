@@ -15,4 +15,6 @@ urlpatterns=[
     path('InvoiceCreate/', views.CreateInvoice, name='InvoiceCreate'),
     path('StaffInChinaManagement/', views.StaffInChinaManagement, name='StaffInChinaManagement'),
     path('StaffInChinaOrderView/', views.StaffInChinaOrderInDetails, name='StaffInChinaOrderView'),
+    path('StaffInUSAInvoicemangement/', views.invoiceCreatePage, name = 'StaffInUSAInvoicemangement'),
+    path('SupervisorProofView/', views.SupervisorProofView, name="SupervisorProofView"),
 ]
