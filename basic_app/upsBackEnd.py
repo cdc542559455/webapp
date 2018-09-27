@@ -213,7 +213,6 @@ def getOptionWithTime():
 	httpresq = Request(url="https://onlinetools.ups.com/ups.app/xml/TimeInTransit", data=data.encode('utf_8'), headers={'Content-Type': 'application/x-www-form-urlencoded'})
 	response = urlopen(httpresq)
 	return_values = response.read()
-	#print(return_values)
 	r = fromstring(return_values)
 	li = []    # list of [des, isSatDelivered, btds, hdc, deldate, time, dow, totalDays]
 	if r.find('Response').find('ResponseStatusCode').text == '0': 
@@ -243,8 +242,6 @@ def getOptionWithTime():
 
 
 def makeServiceWithPrice(optionList):
-	#print(optionList)
-
 	for i in range(len(optionList)-1, -1, -1):
 		#print(opt[0])
 		if optionList[i][0] in o2c:			
@@ -252,18 +249,11 @@ def makeServiceWithPrice(optionList):
 			httpresq = Request(url="https://onlinetools.ups.com/ups.app/xml/Rate", data=xml, headers={'Content-Type': 'application/x-www-form-urlencoded'})
 			response = urlopen(httpresq)
 			return_values = response.read()
-			#print(return_values)
-			#print('hello2')
 			y=BeautifulSoup(return_values,'html.parser').ratingserviceselectionresponse
 			if y != None and y.response.responsestatuscode.string=='0':
-				#print(y.response.error.errordescription.string)
-				#print('hello3')
 				continue
 
-			#print('hello')
 			r = fromstring(return_values)
-			#print(r.find('Response').find('ResponseStatusDescription').text)
-			#print(m[opt], r.find('RatedShipment').find('RatedPackage').find('TotalCharges').find('MonetaryValue').text)
 			charge = r.find('RatedShipment').find('TotalCharges').find('MonetaryValue').text
 			if fromCountry == 'US' and toCountry == 'US':
 				charge = r.find('RatedShipment').find('TransportationCharges').find('MonetaryValue').text
@@ -279,13 +269,11 @@ def getMinOption(optionList):
 	beforeList = []
 	minPrice = 99999999.0
 	afterList = []
-	#print('intialized afterList:',afterList)
 	minDateDiff = -100
 	expectDate = parse(deliveryDate)
 	for opt in optionList:
 		actualDate = parse(opt[4])
 		diffStr = str(expectDate - actualDate).split(' ')[0]
-		#print(diffStr)
 		diff = 0
 		if diffStr != '0:00:00':
 			diff = int(diffStr)
