@@ -13,4 +13,6 @@ urlpatterns=[
     path('StaffInUSAMangement/', views.CustomerInUSAOrderPage, name='StaffInUSAMangement'),
     path('OrderCreating/', views.OrderCreatePage, name='OrderCreating'),
     path('InvoiceCreate/', views.CreateInvoice, name='InvoiceCreate'),
+    path('StaffInChinaManagement/', views.StaffInChinaManagement, name='StaffInChinaManagement'),
+    path('StaffInChinaOrderView/', views.StaffInChinaOrderInDetails, name='StaffInChinaOrderView'),
 ]

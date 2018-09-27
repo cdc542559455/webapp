@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block body_block %}
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4">Order Details</h1>
+  </div><!-- /.jumbotron -->
+  {% if dic == None %}
+    <p>You don't have any proof</p>
+    {% else %}
+      <div class="col-xs-1" align="center"><img class="img-thumbnail img-fluid" src={{pic_src}} alt="No graph or graph crashes"></div>
+      <br>
+      <table class = "table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">Information</th>
+              <th scope="col">Detail</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for key, values in dic.items %}
+              <tr>
+                <td>{{key}}</td>
+                <td>{{values}}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+      </table>
+    <form method='post' action="#">
+        {% csrf_token %}
+        <table class = "table table-striped" >
+            <tr>
+                <th scope="col">Image:</td>
+                <th scope="col"><input type="file" name="myImage" accept="image/*"> </td>
+            </tr>
+            <tr>
+                <th></th>
+                {% csrf_token %}
+                <th><input type="submit"  class="btn btn-info float-right" ></th>
+            </tr>
+        </table>
+        
+    
+    </form>
+{% endif %}
+
+{% endblock %}

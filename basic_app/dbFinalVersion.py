@@ -1,6 +1,7 @@
 
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
+import itertools
 
 '''
 Pre-requirement:
@@ -68,28 +69,29 @@ def customerQueryInvoice(invoiceNumber):
                 return None, None, None
 
 
+# up load a file path to s3 and return the public address of the file
 def uploadToS3(path):
-        try:
-                open(path, 'r')
-        except OSError:
-                print("cant find: " + path)
-                return
-        fileName = path.split("\\")[len(path.split("\\")) - 1]
-        user = boto3.client(service_name='s3', aws_access_key_id = key, aws_secret_access_key = secret)
-        s3 = boto3.resource('s3')
+	try:
+		open(path, 'r')
+	except OSError:
+		print("cant find: " + path)
+		return
+	fileName = path.split("\\")[len(path.split("\\")) - 1]
+	user = boto3.client(service_name='s3', aws_access_key_id = key, aws_secret_access_key = secret)
+	s3 = boto3.resource('s3')
 
-        MyS3Objects = [s.key for s in s3.Bucket(BUCKET_NAME).objects.filter(Prefix="")]  
-        if fileName in MyS3Objects:
-                print(fileName, " is already on S3")
-                return     	
+	MyS3Objects = [s.key for s in s3.Bucket(BUCKET_NAME).objects.filter(Prefix="")]  
+	if fileName in MyS3Objects:
+		print(fileName, " is already on S3")
+		return     	
 
-        transfer = boto3.s3.transfer.S3Transfer(user)    
-        transfer.upload_file(path, BUCKET_NAME, fileName)
-        object_acl = s3.ObjectAcl(BUCKET_NAME,fileName)
-        response = object_acl.put(ACL='public-read')	
-        url = "https://s3-us-west-2.amazonaws.com/orderpictures/" + fileName
-        return (url)
-
+	transfer = boto3.s3.transfer.S3Transfer(user)    
+	transfer.upload_file(path, BUCKET_NAME, fileName)
+	object_acl = s3.ObjectAcl(BUCKET_NAME,fileName)
+	response = object_acl.put(ACL='public-read')	
+	url = "https://s3-us-west-2.amazonaws.com/orderpictures/" + fileName
+	return (url)
+	
 
 def creatProof(PO, cusName, itemNum, quantity, material, size, item_color, imprint_method, imprint_color, picture_path):
         # load "Proof" table
@@ -157,13 +159,9 @@ def customerQueryOrder(orderNumber):
         )    
 
         if not len(response['Items']) == 0:
-                for r in response['Items']:
-                        print(print("Order Number: " + str(r["Order Number"])))
-                        for k, v in r.items() :
-                                if k != "Order Number":
-                                        print (k + ": " + v + '\n') 
+                return response['Items'][0]
         else:
-                print("No result found")    
+                return None    
 
 
 def customerQueryProof(PO):
@@ -252,6 +250,51 @@ def partialEmployeeScanProof():
     print(result)
     return result
 
+def showFullOrder(orderNumber):
+	# load "Order" table
+	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
+	table = dynamodb.Table('Order')     
+	response = table.query(
+	    KeyConditionExpression=Key('Order Number').eq(orderNumber)
+	)    
+	resultList = []
+	addtionDirct = {}
+	if not len(response['Items']) == 0:
+		r = response['Items'][0]
+		resultList.append(str(r['Order Number']))
+		resultList.append(str(r['Order Date']))
+		resultList.append(str(r['In-Hands Date (in USA)']))
+		resultList.append(str(r['Shipping Method']))
+		resultList.append(str(r['Delivery Address']))
+		resultList.append(str(r['Nexus Identity Item Number']))
+		resultList.append(str(r["Material"]))
+		resultList.append(str(r["Quantity"]))
+		resultList.append(str(r["Product Color"]))
+		resultList.append(str(r["Imprint Method"]))
+		resultList.append(str(r["Imprint Color"]))
+		resultList.append(str(r["Customer Name"]))
+		resultList.append(str(r["PO Number"]))
+		resultList.append(str(r["Attached_picture"]))
+		
+		# fill addtionDirct with additional parameter 
+		addtionDirct = r
+		addtionDirct.pop('Order Number')
+		addtionDirct.pop('Order Date')
+		addtionDirct.pop('In-Hands Date (in USA)')
+		addtionDirct.pop('Shipping Method')
+		addtionDirct.pop('Delivery Address')
+		addtionDirct.pop('Nexus Identity Item Number')
+		addtionDirct.pop("Material")
+		addtionDirct.pop("Quantity")
+		addtionDirct.pop("Product Color")
+		addtionDirct.pop("Imprint Method")
+		addtionDirct.pop("Imprint Color")
+		addtionDirct.pop("Customer Name")
+		addtionDirct.pop("PO Number")
+		addtionDirct.pop("Attached_picture")
+	return resultList, addtionDirct
+
+
 def partialEmployeeScanOrder():
     dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
     table = dynamodb.Table('Order')   
@@ -263,8 +306,47 @@ def partialEmployeeScanOrder():
                 oneOrder.append(str(r['Customer Name']))
                 oneOrder.append(str(r['Delivery Address']))
                 result.append(oneOrder)
-    print(result)
-    return result  
+    return result 
+
+def ChinaEmployeeUpdatePicture(orderID, path):
+	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
+	table = dynamodb.Table('Order') 
+	Keys = {}
+	Keys["Order Number"] = str(orderID)
+	table.update_item(
+	    Key = Keys, 
+	    UpdateExpression='SET Attached_picture = :val1',
+	    ExpressionAttributeValues={
+	            ':val1': path
+	    }	    
+	)
+
+def generateOrUpdateOrderAndProof(info):
+	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
+	orderTable = dynamodb.Table('Order')  
+
+	orderItem = {}
+	orderItem["Order Number"] = info[0]
+	orderItem["Order Date"] = info[1]
+	orderItem["In-Hands Date (in USA)"] = info[2]
+	orderItem["Shipping Method"] = info[3]
+	orderItem["Delivery Address"] = info[4]
+	orderItem["Nexus Identity Item Number"] = info[5]
+	orderItem["Material"] = info[6]
+	orderItem["Quantity"] = info[7]
+	orderItem["Imprint Color"] = info[8]
+	orderItem["Imprint Method"] = info[9]
+	orderItem["Product Color"] = info[10]
+	orderItem["Customer Name"] = info[11]
+	orderItem["PO Number"] = info[12]
+	orderItem["Attached_picture"] = str(uploadToS3(info[13]))
+	add = info[14]
+	if (len(add) != 0):
+		for k, v in add.items():
+			orderItem[k] = v
+	#print(orderItem)
+	# upload order table	
+	orderTable.put_item(Item = orderItem) 	
 '''
 Fake order:
 1. Order#: 555, orderDate: 9-24-2018, inHandDate: 9-28-2018, shippingMethod: AIR, deliverAddr: 8010 NE, nexusIdentityItemNum: 1
@@ -279,7 +361,7 @@ if __name__ == '__main__':
         # generateOrUpdateOrder("458", "9-24-2018", "9-28-2018", "AIR", "8010 NE", "1", "10oz", "wood", "10", "red", "wtf", "blue",
         #                  "Hongfei Xie", "100",  "C:\\Users\\lokic\\OneDrive\\desktop\\Actual_Project\\webapp\\media\basic_app\\mainImage\\account-bank-banking-862730.jpg",
         #                  add1 = "NO THANKS", add2 = "NO MORE")
-        
+        #   generateOrUpdateOrder
         # print('----------------------------------------------')
         
         # customerQueryProof("100")
@@ -288,8 +370,12 @@ if __name__ == '__main__':
         # x,y = customerQueryInvoice("666")
         # print(x)
         # print(y)
-        partialEmployeeScanOrder()
-        print("hello word")
+        # partialEmployeeScanOrder()
+        # print("hello word")
+        # l = ["a", "b", "c", "d", "e"]
+        # print(l)
+        # d = dict(itertools.zip_longest(*[iter(l)] * 2, fillvalue=""))
+        # print(d)
         # customerQueryProof("100")
         # print('----------------------------------------------')
         
@@ -307,4 +393,11 @@ if __name__ == '__main__':
         # print('***************************************')
         # employeeScanInvoice()
         # print('***************************************')
-        
+        # x, y = showFullOrder('555')
+        # print(x)
+        # print(y)
+        # l = list(range(5,10))
+        # print(l)
+        generateOrUpdateOrderAndProof(["333333sss", "9-24-2018", "9-28-2018", "AIR", "230120 8th AVE SE", "IBN-300", "10oz", "wood", "100", "red", "wtf", "blue",
+	                      "Alex Xie", "100", "C:\\Users\\lokic\\OneDrive\\desktop\\Actual_Project\\webapp\\googluck.jpg", { "tryAdd":"YES", "tryAdd2":"WORKED"}])
+	

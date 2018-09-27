@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
     integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css?family=Notable" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -23,7 +22,7 @@
           {% if user.is_customer %}
             <a class="nav-link" href="{% url 'basic_app:CustomerProofSearch' %}">Customer Proof Search</a>
           {% elif user.is_staffInChina %}
-            <a class="nav-link" href="{% url 'login' %}">You are staffInChina</a>
+            <a class="nav-link" href="{% url 'basic_app:StaffInChinaManagement' %}">Staff in China Management Board</a>
           {% elif user.is_staffInUSA %}
           <a class="nav-link" href="{% url 'basic_app:InvoiceCreate' %}">Invoice Create</a>
           {% else %}
@@ -33,9 +32,8 @@
           {% if user.is_customer %}
             <a class="nav-link" href="{% url 'basic_app:CustomerInvoiceSearch' %}">Customer Invoice Search</a>
           {% elif user.is_staffInChina %}
-            <a class="nav-link" href="{% url 'login' %}">You are staffInChina</a>
           {% elif user.is_staffInUSA %}
-            <a class="nav-link" href="{% url 'basic_app:StaffInUSAMangement' %}">Staff in USA management board</a>
+            <a class="nav-link" href="{% url 'basic_app:StaffInUSAMangement' %}">Staff in USA Management Board</a>
           {% else %}
             <a class="nav-link" href="{% url 'login' %}">You are supervisor</a>
           {% endif %}

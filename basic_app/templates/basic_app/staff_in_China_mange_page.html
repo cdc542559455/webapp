@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block body_block %}
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4">This page for staff in China mangament</h1>
+    <p class="lead">Items below are all orders in our systems </p>
+  </div><!-- /.jumbotron -->
+    
+  <table class = "table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Order Number</th>
+            <th scope="col">Customer Name</th>
+            <th scope="col">Customer Address</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for order in list_all_order %}
+                <tr>
+                  {% for subitem in order %}
+                    <td>{{subitem}}</td>
+                  {% endfor %}
+                  <td style="width: 150px">
+                        <form action="{% url 'basic_app:StaffInChinaOrderView' %}" method="POST">
+                            {% csrf_token %}
+                          <input type="hidden" value="{{order.0}}" name="orderID">
+                            <button type="submit"
+                            class="btn btn-warning btn-sm js-update-order">
+                            <span class="glyphicon glyphicon-pencil"></span> Edit
+                        </button>
+                        </form>
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                      <td colspan="8" class="text-center bg-warning">No order</td>
+                  </tr>
+                  {% endfor %}
+        </tbody>
+  </table>
+
+</div>
+{% endblock %}

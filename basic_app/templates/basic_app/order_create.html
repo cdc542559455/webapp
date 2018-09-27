@@ -23,62 +23,72 @@
             <tbody id = "mytbody">
                 <tr>
                     <td>Order Number</td>
-                    <td><input type="text" name = "1"></td>
+                    <td><input type="text" name = "1" value="{{listpart.0}}"></td>
                 </tr>
                 <tr>
                     <td>Order Date</td>
-                    <td><input type="text" name = "2"></td>
+                    <td><input type="text" name = "2" value="{{listpart.1}}"></td>
                 </tr>
                 <tr>
                     <td>In Hand Date</td>
-                    <td><input type="text" name = "3"></td>
+                    <td><input type="text" name = "3" value="{{listpart.2}}"></td>
                 </tr>
                 <tr>
                     <td>Shipping Method</td>
-                    <td><input type="text" name = "4"></td>
+                    <td><input type="text" name = "4" value="{{listpart.3}}"></td>
                 </tr>
                 <tr>
                     <td>Deliver Address</td>
-                    <td><input type="text" name = "5"></td>
+                    <td><input type="text" name = "5" value="{{listpart.4}}"></td>
                 </tr>
                 <tr>
                     <td>Item Number</td>
-                    <td><input type="text" name = "6"></td>
+                    <td><input type="text" name = "6" value="{{listpart.5}}"></td>
                 </tr>
                 <tr>
                     <td>Materials</td>
-                    <td><input type="text" name = "7"></td>
+                    <td><input type="text" name = "7" value="{{listpart.6}}"></td>
                 </tr>
                 <tr>
                     <td>Quantity</td>
-                    <td><input type="text" name = "8"></td>
+                    <td><input type="text" name = "8" value="{{listpart.7}}"></td>
+                </tr>
+                <tr>
+                    <td>Imprint Color</td>
+                    <td><input type="text" name = "9" value="{{listpart.8}}"></td>
+                </tr>
+                <tr>
+                    <td>Imprint Method</td>
+                    <td><input type="text" name = "10" value="{{listpart.9}}"></td>
                 </tr>
                 <tr>
                     <td>Product Color</td>
-                    <td><input type="text" name = "9"></td>
-                </tr>
-                <tr>
-                    <td>Product Method</td>
-                    <td><input type="text" name = "10"></td>
-                </tr>
-                <tr>
-                    <td>Product Color</td>
-                    <td><input type="text" name = "11"></td>
+                    <td><input type="text" name = "11" value="{{listpart.10}}"></td>
                 </tr>
                 <tr>
                     <td>Customer Name</td>
-                    <td><input type="text" name = "12"></td>
+                    <td><input type="text" name = "12" value="{{listpart.11}}"></td>
                 </tr>
                 <tr>
                     <td>P.O. number</td>
-                    <td><input type="text" name = "13"></td>
+                    <td><input type="text" name = "13" value="{{listpart.12}}"></td>
+                </tr>
+                <tr>
+                    <td></td>
                 </tr>
                 <tr>
                     <td>Design Graph</td>
-                    <td><input type="file" name ="14" accept="image/"></td>
+                    <td><input type="file" name ="14" accept="image/" value="{{listpart.13}}"></td>
                 </tr>
+                {% for k, v1 in newCompound.items %}
+                <tr>
+                    <td><input type="text" value = "{{v1.0}}" name = "{{k}}" ></td>
+                    <td><input type="text" value = "{{v1.1}}" name = "{{k | add:"1"}}" ></td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
+        {% csrf_token %}
          <input type="button" align="right" class="btn btn-primary float-right" value="Add New Row" onclick="addRow();" id="add-row">
         </br>
         </br>
