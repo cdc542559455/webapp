@@ -22,51 +22,51 @@
         <tbody>
             <tr>
                 <td>
-                    City <input type="text" name="fromCity"> 
+                    City <input type="text" name="fc"> 
                 </td>
                 <td>
-                    City <input type="text"name="toCity">
+                    City <input type="text" name="tc">
                 </td>
                 <td>
-                    Lenth <input type="text" name="length" required>
+                    Lenth <input type="number" name="le" required>
                 </td>
                 </tr>
                 <tr>
                     <td>
-                    State <input type="text" name="fromState">
+                    State <input type="text" name="fs">
                 </td>
                     <td>
-                    State <input type="text" name="toState">
+                    State <input type="text" name="ts">
                     </td>
-                    <td>Width <input type="text" name="width" required></td>
+                    <td>Width <input type="number" name="wd" required></td>
                 </tr>
                     <tr>
                         <td>
-                            Country Code <input type="text" name="fromCountry" required>
+                            Country Code <input type="text" name="fco" required>
                         </td>
                         <td>
-                            Country Code <input type="text" name="toCountry" required>
+                            Country Code <input type="text" name="tco" required>
                         </td>
-                        <td>Height <input type="text" name="height" required></td>
+                        <td>Height <input type="number" name="he" required></td>
                     </tr>
                     <tr>
-                        <td>Zip Code <input type="text" name="fromZip" required></td>
-                        <td>Zip Code <input type="text" name="toZip" required></td>
+                        <td>Zip Code <input type="text" name="fz" required></td>
+                        <td>Zip Code <input type="text" name="tz" required></td>
                         <td>Number of Package <input type="number" name="nop" required></td>
                     </tr>
                     <tr>
-                        <td>Status <select name="isFromResidential" >
+                        <td>Status <select name="ifr" >
                             <option value="residential">residential</option>
                             <option value="commercial">commercial</option>
                         </select></td>
-                        <td>Status  <select name="isToResidential" >
-                                <option value="residential">residential</option>
-                                <option value="commercial">commercial</option>
+                        <td>Status  <select name="itr" >
+                            <option value="residential">residential</option>
+                            <option value="commercial">commercial</option>
                         </select></td>
                         <td>Pickup Date <input type="date", name="pcd"></td>
                         <tr>
                             <td></td>
-                            <td></td>
+                            <td>Weight <input type="number" name="we" required></td>
                             <td>Delivered Date <input type="date", name="dd"></td>
                     </tr>
             </tr>
