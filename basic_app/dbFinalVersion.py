@@ -42,8 +42,8 @@ def generateOrUpdateInvoice(invoiceNumber, invoiceDate, PO, billTo, shipTo, dueD
                         additem.append(trans)
                 item["Details"] = additem
 
-        # upload table	
-        table.put_item(Item = item) 
+        # upload table
+        table.put_item(Item = item)
 
 
 def customerQueryInvoice(invoiceNumber):
@@ -53,7 +53,7 @@ def customerQueryInvoice(invoiceNumber):
 
         response = table.query(
                 KeyConditionExpression=Key('Invoice #').eq(invoiceNumber)
-        )   
+        )
 
         # total Amount
         total = 0.00
@@ -80,26 +80,26 @@ def uploadToS3(path):
 	user = boto3.client(service_name='s3', aws_access_key_id = key, aws_secret_access_key = secret)
 	s3 = boto3.resource('s3')
 
-	MyS3Objects = [s.key for s in s3.Bucket(BUCKET_NAME).objects.filter(Prefix="")]  
+	MyS3Objects = [s.key for s in s3.Bucket(BUCKET_NAME).objects.filter(Prefix="")]
 	if fileName in MyS3Objects:
 		print(fileName, " is already on S3")
-		return     	
+		return
 
-	transfer = boto3.s3.transfer.S3Transfer(user)    
+	transfer = boto3.s3.transfer.S3Transfer(user)
 	transfer.upload_file(path, BUCKET_NAME, fileName)
 	object_acl = s3.ObjectAcl(BUCKET_NAME,fileName)
-	response = object_acl.put(ACL='public-read')	
+	response = object_acl.put(ACL='public-read')
 	url = "https://s3-us-west-2.amazonaws.com/orderpictures/" + fileName
 	return (url)
-	
+
 
 def creatProof(PO, cusName, itemNum, quantity, material, size, item_color, imprint_method, imprint_color, picture_path):
         # load "Proof" table
         dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
-        table = dynamodb.Table('Proof')  
+        table = dynamodb.Table('Proof')
 
         # get feedback URL for order picture
-        pictureUrl = uploadToS3(picture_path)	
+        pictureUrl = uploadToS3(picture_path)
 
         item = {}
         item["PO Number"] = PO
@@ -110,18 +110,18 @@ def creatProof(PO, cusName, itemNum, quantity, material, size, item_color, impri
         item["Size / Capacity"] = size
         item["Item Color"] = item_color
         item["Imprint Method"] = imprint_method
-        item["Imprint Color"] = imprint_color	
+        item["Imprint Color"] = imprint_color
         item["Attached_picture"] = pictureUrl
 
-        # upload table	
-        table.put_item(Item = item) 	
+        # upload table
+        table.put_item(Item = item)
 
 
 def generateOrUpdateOrder(orderNumber, orderDate, inHandDate, shippingMethod, deliverAddr, nexusIdentityItemNum, size,
                      material, quantity, productColor, imprintMethod, imprintColor, cusName, PO, picture_path, **add):
         # load "Order" table
         dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
-        orderTable = dynamodb.Table('Order')  
+        orderTable = dynamodb.Table('Order')
 
         orderItem = {}
         orderItem["Order Number"] = orderNumber
@@ -142,8 +142,8 @@ def generateOrUpdateOrder(orderNumber, orderDate, inHandDate, shippingMethod, de
                 for k, v in add.items():
                         orderItem[k] = v
 
-        # upload order table	
-        orderTable.put_item(Item = orderItem) 	
+        # upload order table
+        orderTable.put_item(Item = orderItem)
 
         # meanwhile update the proof table
         creatProof(PO, cusName, nexusIdentityItemNum, quantity, material, size, productColor, imprintMethod, imprintColor, picture_path)
@@ -153,58 +153,78 @@ def generateOrUpdateOrder(orderNumber, orderDate, inHandDate, shippingMethod, de
 def customerQueryOrder(orderNumber):
         # load "Order" table
         dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
-        table = dynamodb.Table('Order')     
+        table = dynamodb.Table('Order')
         response = table.query(
                 KeyConditionExpression=Key('Order Number').eq(orderNumber)
-        )    
+        )
 
         if not len(response['Items']) == 0:
                 return response['Items'][0]
         else:
-                return None    
+                return None
 
 
 def customerQueryProof(PO):
         # load "Order" table
         dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
-        table = dynamodb.Table('Proof')     
+        table = dynamodb.Table('Proof')
         response = table.query(
                 KeyConditionExpression=Key('PO Number').eq(PO)
-        )    
+        )
 
         if not len(response['Items']) == 0:
                 return response['Items'][0]
         else:
-                return None     
-                
-                
+                return None
+
+
 def employeeScanInvoice():
         dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
-        table = dynamodb.Table('Invoice')     
+        table = dynamodb.Table('Invoice')
         if not len(table.scan()['Items']) == 0:
                 for r in table.scan()['Items']:
                         customerQueryInvoice(r['Invoice #'])
                         print('-----------------------------------------------------')
-                        
+
 
 def employeeScanProof():
         dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
-        table = dynamodb.Table('Proof')     
+        table = dynamodb.Table('Proof')
         if not len(table.scan()['Items']) == 0:
                 for r in table.scan()['Items']:
                         for k, v in r.items() :
-                                print (k + ": " + str(v)) 
+                                print (k + ": " + str(v))
                         print()
 
 def employeeScanOrder():
         dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
-        table = dynamodb.Table('Order')     
+        table = dynamodb.Table('Order')
         if not len(table.scan()['Items']) == 0:
                 for r in table.scan()['Items']:
                         for k, v in r.items() :
-                                print (k + ": " + str(v)) 
+                                print (k + ": " + str(v))
                         print()
 
+def queryProof(PONumber):
+	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
+	table = dynamodb.Table('Order')     
+	response = table.scan(
+	    FilterExpression=Attr('PO Number').eq(PONumber)
+	)
+	result = {}
+	if not len(response['Items']) == 0:
+		r = response['Items'][0]
+		result['PO Number']	= r['PO Number']
+		result['Customer Name'] = r["Customer Name"]
+		result['Item Number'] = r['Nexus Identity Item Number']
+		result['Quantity'] = r['Quantity']
+		result['Size/Capacity'] = r['Size']
+		result['Item Color'] = r['Product Color']
+		result['Material'] = r['Material']
+		result['Imprint Method'] = r["Imprint Method"]
+		result['Imprint Color'] = r["Imprint Color"]
+		result['Attached_picture'] = r['Attached_picture']
+	return result
 
 def partialEmployeeScanInvoice():
     # load "Invoice" table
@@ -214,7 +234,7 @@ def partialEmployeeScanInvoice():
     if not len(table.scan()['Items']) == 0:
         for r in table.scan()['Items']:
             # total Amount
-            total = 0.00            
+            total = 0.00
             oneInvoice = []
             print("Invoice #: " + r["Invoice #"])
             print("Invoice Date: " + r["Invoice Date"])
@@ -228,35 +248,30 @@ def partialEmployeeScanInvoice():
             oneInvoice.append(str("%.2f" % total))
             result.append(oneInvoice)
     else:
-        print("No result found")  
+        print("No result found")
     print(result)
     return result
 
-def partialEmployeeScanProof():
-    dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
-    table = dynamodb.Table('Proof')     
-    result = []
-    if not len(table.scan()['Items']) == 0:
-        for r in table.scan()['Items']:
-            oneProof = []
-            oneProof.append(str(r['PO Number']))
-            oneProof.append(str(r['Item Number']))
-            oneProof.append(str(r['Quantity']))
-            result.append(oneProof)
-            print("PO Number: " + str(r['PO Number']))
-            print("Item Number: " + str(r['Item Number']))
-            print("Quantity: " + str(r['Quantity']))
-            print()      
-    print(result)
-    return result
+def partialScanProof():
+	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
+	table = dynamodb.Table('Order')
+	result = []
+	if not len(table.scan()['Items']) == 0:
+		for r in table.scan()['Items']:
+			sr = []
+			sr.append(r['PO Number']) 
+			sr.append(r['Nexus Identity Item Number'])
+			sr.append(r['Quantity'])
+			result.append(sr)
+	return result
 
 def showFullOrder(orderNumber):
 	# load "Order" table
 	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
-	table = dynamodb.Table('Order')     
+	table = dynamodb.Table('Order')
 	response = table.query(
 	    KeyConditionExpression=Key('Order Number').eq(orderNumber)
-	)    
+	)
 	resultList = []
 	addtionDirct = {}
 	if not len(response['Items']) == 0:
@@ -275,8 +290,8 @@ def showFullOrder(orderNumber):
 		resultList.append(str(r["Customer Name"]))
 		resultList.append(str(r["PO Number"]))
 		resultList.append(str(r["Attached_picture"]))
-		
-		# fill addtionDirct with additional parameter 
+
+		# fill addtionDirct with additional parameter
 		addtionDirct = r
 		addtionDirct.pop('Order Number')
 		addtionDirct.pop('Order Date')
@@ -297,7 +312,7 @@ def showFullOrder(orderNumber):
 
 def partialEmployeeScanOrder():
     dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
-    table = dynamodb.Table('Order')   
+    table = dynamodb.Table('Order')
     result = []
     if not len(table.scan()['Items']) == 0:
         for r in table.scan()['Items']:
@@ -306,24 +321,45 @@ def partialEmployeeScanOrder():
                 oneOrder.append(str(r['Customer Name']))
                 oneOrder.append(str(r['Delivery Address']))
                 result.append(oneOrder)
-    return result 
+    return result
 
 def ChinaEmployeeUpdatePicture(orderID, path):
 	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
-	table = dynamodb.Table('Order') 
+	table = dynamodb.Table('Order')
 	Keys = {}
 	Keys["Order Number"] = str(orderID)
 	table.update_item(
-	    Key = Keys, 
+	    Key = Keys,
 	    UpdateExpression='SET Attached_picture = :val1',
 	    ExpressionAttributeValues={
 	            ':val1': path
-	    }	    
+	    }
 	)
+
+def queryProof(PONumber):
+	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
+	table = dynamodb.Table('Order')     
+	response = table.scan(
+	    FilterExpression=Attr('PO Number').eq(PONumber)
+	)
+	result = {}
+	if not len(response['Items']) == 0:
+		r = response['Items'][0]
+		result['PO Number']	= r['PO Number']
+		result['Customer Name'] = r["Customer Name"]
+		result['Item Number'] = r['Nexus Identity Item Number']
+		result['Quantity'] = r['Quantity']
+		result['Size/Capacity'] = r['Size']
+		result['Item Color'] = r['Product Color']
+		result['Material'] = r['Material']
+		result['Imprint Method'] = r["Imprint Method"]
+		result['Imprint Color'] = r["Imprint Color"]
+		result['Attached_picture'] = r['Attached_picture']
+	return result
 
 def generateOrUpdateOrderAndProof(info):
 	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
-	orderTable = dynamodb.Table('Order')  
+	orderTable = dynamodb.Table('Order')
 
 	orderItem = {}
 	orderItem["Order Number"] = info[0]
@@ -345,8 +381,26 @@ def generateOrUpdateOrderAndProof(info):
 		for k, v in add.items():
 			orderItem[k] = v
 	#print(orderItem)
-	# upload order table	
-	orderTable.put_item(Item = orderItem) 	
+	# upload order table
+	orderTable.put_item(Item = orderItem)
+
+def partialEmployeeScanProof():
+    dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
+    table = dynamodb.Table('Proof')     
+    result = []
+    if not len(table.scan()['Items']) == 0:
+        for r in table.scan()['Items']:
+            oneProof = []
+            oneProof.append(str(r['PO Number']))
+            oneProof.append(str(r['Item Number']))
+            oneProof.append(str(r['Quantity']))
+            result.append(oneProof)
+            print("PO Number: " + str(r['PO Number']))
+            print("Item Number: " + str(r['Item Number']))
+            print("Quantity: " + str(r['Quantity']))
+            print()      
+    print(result)
+    return result
 '''
 Fake order:
 1. Order#: 555, orderDate: 9-24-2018, inHandDate: 9-28-2018, shippingMethod: AIR, deliverAddr: 8010 NE, nexusIdentityItemNum: 1
@@ -363,7 +417,7 @@ if __name__ == '__main__':
         #                  add1 = "NO THANKS", add2 = "NO MORE")
         #   generateOrUpdateOrder
         # print('----------------------------------------------')
-        
+
         # customerQueryProof("100")
         # print('----------------------------------------------')
         # customerQueryInvoice("666")
@@ -378,14 +432,14 @@ if __name__ == '__main__':
         # print(d)
         # customerQueryProof("100")
         # print('----------------------------------------------')
-        
-        # generateOrUpdateInvoice("4295","09/14/2018","05-215061-B","me","you", "09/14/2018", 
+
+        # generateOrUpdateInvoice("4295","09/14/2018","05-215061-B","me","you", "09/14/2018",
         #                    "Alex", ["500", "OMG", "1"], ["302", "SWS1", "0.85"], ["302", "PP", "0.17"], ["1", "SS", "50"])
-                           
-        # generateOrUpdateInvoice("666","14/2018","2-B","hello","where are you", "1/2018", 
+
+        # generateOrUpdateInvoice("666","14/2018","2-B","hello","where are you", "1/2018",
         #                    "Iris", ["10", "fk", "3"], ["2", "fish", "7.85"])
         # print('----------------------------------------------')
-        
+
         # print('***************************************')
         # employeeScanOrder()
         # print('***************************************')
@@ -400,4 +454,4 @@ if __name__ == '__main__':
         # print(l)
         # generateOrUpdateOrderAndProof(["333333sss", "9-24-2018", "9-28-2018", "AIR", "230120 8th AVE SE", "IBN-300", "10oz", "wood", "100", "red", "wtf", "blue",
 	#                       "Alex Xie", "100", "C:\\Users\\lokic\\OneDrive\\desktop\\Actual_Project\\webapp\\googluck.jpg", { "tryAdd":"YES", "tryAdd2":"WORKED"}])
-	partialEmployeeScanProof()
+        print(queryProof('700'))

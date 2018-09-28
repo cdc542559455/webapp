@@ -29,8 +29,10 @@ function addDetail(){
     var newInput2 = document.createElement("INPUT");
     var newInput3 = document.createElement("INPUT");
     newInput1.setAttribute("name",(row-1)*3+11);
+    newInput1.setAttribute("type", 'number')
     newInput2.setAttribute("name",(row-1)*3+12);
     newInput3.setAttribute("name",(row-1)*3+13);
+    newInput3.setAttribute("type", 'number')
     newTH1.appendChild(newInput1);
     newTH2.appendChild(newInput2);
     newTH3.appendChild(newInput3);

@@ -30,17 +30,14 @@
         {% csrf_token %}
         <table class = "table table-striped" >
             <tr>
-                <th scope="col">Image:</td>
-                <th scope="col"><input type="file" name="myImage" accept="image/*"> </td>
+                {{uploadform.as_p}}
             </tr>
             <tr>
                 <th></th>
                 {% csrf_token %}
                 <th><input type="submit"  class="btn btn-info float-right" ></th>
             </tr>
-        </table>
-        
-    
+        </table>    
     </form>
 {% endif %}
 

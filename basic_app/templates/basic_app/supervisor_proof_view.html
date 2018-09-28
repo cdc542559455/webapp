@@ -25,26 +25,16 @@
                     <td>{{subitem}}</td>
                   {% endfor %}
                   <td style="width: 150px">
-                        <form action="{% url 'basic_app:InvoiceCreate' %}" method="POST">
+                        <form action="{% url 'basic_app:proofDetailsView' %}" method="POST">
                             {% csrf_token %}
-                          <input type="hidden" value="{{order.0}}" name="orderID">
+                          <input type="hidden" value="{{proof.0}}" name="number">
                             <button type="submit"
                             class="btn btn-warning btn-sm js-update-order"
                             data-url="#">
-                            <span class="glyphicon glyphicon-pencil"></span> Edit
+                            <span class="glyphicon glyphicon-pencil"></span> View
                         </button>
                         </form>
                     </td>
-                    <td>
-                        <form action=""method="POST">
-                        {% csrf_token %}
-                        <button type="submit"
-                                class="btn btn-danger btn-sm js-delete-order"
-                                data-url="#">
-                          <span class="glyphicon glyphicon-trash"></span> Delete
-                        </button>
-                      </form>
-                      </td>
                     </tr>
                   {% empty %}
                   <tr>

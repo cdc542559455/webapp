@@ -13,7 +13,7 @@ class CustomUser(AbstractUser):
     is_customer = models.BooleanField(default=False)
     is_staffInChina = models.BooleanField(default=False)
     is_staffInUSA = models.BooleanField(default=False)
-    is_supervisor = models.BooleanField(default=False)
+    is_supervisor = models.BooleanField(default=True)
 
     USER_TYPE_CHOICES = (
       (1, 'customer'),

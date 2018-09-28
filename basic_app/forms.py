@@ -22,15 +22,29 @@ class StaffSignUpForm(UserCreationForm):
         if (user.user_type == 1):
             user.is_active = True
             user.is_customer = True
+            user.is_staffInChina = False
+            user.is_staffInUSA = False
+            user.is_supervisor = False
     
         elif (user.user_type == 2):
             user.is_active = False
+            user.is_customer = False
             user.is_staffInChina = True
+            user.is_staffInUSA = False
+            user.is_supervisor = False
+
         elif (user.user_type == 3):
-            user.is_active =False
+            user.is_active = False
+            user.is_customer = False
+            user.is_staffInChina = False
             user.is_staffInUSA = True
+            user.is_supervisor = False
+
         else:
-            user.is_active =False
+            user.is_active = False
+            user.is_customer = False
+            user.is_staffInChina = False
+            user.is_staffInUSA = False
             user.is_supervisor = True
 
         if commit:
@@ -42,3 +56,8 @@ class StaffSignUpChangeForm(UserChangeForm):
     class Meta:
         model = CustomUser
         fields = ( 'email' , 'username', 'user_type', )
+
+        
+class UploadFileForm(forms.Form):
+    title = forms.CharField(max_length=50)
+    file = forms.FileField()

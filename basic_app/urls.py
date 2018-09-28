@@ -17,4 +17,5 @@ urlpatterns=[
     path('StaffInChinaOrderView/', views.StaffInChinaOrderInDetails, name='StaffInChinaOrderView'),
     path('StaffInUSAInvoicemangement/', views.invoiceCreatePage, name = 'StaffInUSAInvoicemangement'),
     path('SupervisorProofView/', views.SupervisorProofView, name="SupervisorProofView"),
+    path('ProofDetails/', views.proofDetailsView, name="proofDetailsView"),
 ]

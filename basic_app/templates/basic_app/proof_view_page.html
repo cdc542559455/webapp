@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block body_block %}
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="display-4">Proof details</h1>
+    <p class="lead">If you want to change follow details, please go to order system to change </p>
+  </div><!-- /.jumbotron -->
+        <div class="col-xs-1" align="center"><img class="img-thumbnail img-fluid" src={{pic_src}} alt=""></div>
+        <table class = "table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">Information</th>
+                <th scope="col">Detail</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for key, values in dic.items %}
+                <tr>
+                  <td>{{key}}</td>
+                  <td>{{values}}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+        </table>
+</div><!-- /.container -->
+
+{% endblock %}

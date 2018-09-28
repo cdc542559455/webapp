@@ -33,7 +33,7 @@
                   <td style="width: 150px">
                         <form action="{% url 'basic_app:InvoiceCreate' %}" method="POST">
                             {% csrf_token %}
-                          <input type="hidden" value="{{order.0}}" name="orderID">
+                          <input type="hidden" value="{{invoice.0}}" name="invoiceNumber">
                             <button type="submit"
                             class="btn btn-warning btn-sm js-update-order"
                             data-url="#">
