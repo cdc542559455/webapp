@@ -14,38 +14,57 @@ secret = "oMcTP0Y6sMktMAgVUk5OZ34dUBn/VRhjjBiXjsIZ"
 region = "us-west-2"
 BUCKET_NAME = "orderpictures"
 
+def generateOrUpdateInvoice(info, additional):
+	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
+	table = dynamodb.Table('Invoice')
 
-def generateOrUpdateInvoice(invoiceNumber, invoiceDate, PO, billTo, shipTo, dueDate, cusName, *details):
+	# add necessary info for invoice
+	item = {}
+	item["Invoice #"] = info[0]
+	item["Invoice Date"] = info[1]
+	item["P.O.#"] = info[2]
+	item["Bill To"] = info[3]
+	item["Ship To"] = info[4]
+	item["Due Date"] = info[5]
+	item["Customer Name"] = info[6]
+
+	# if there is any transaction details
+	if len(additional) != 0:
+		add = []
+		for trans in additional:
+			amount = 0.00
+			# calculate single transaction amount
+			amount = str("%.2f" % (int(trans[0]) * float(trans[2])))
+			trans.append(amount)
+			add.append(trans)
+		item["Details"] = add
+			
+	# upload table	
+	table.put_item(Item = item) 	
+
+
+def customerQueryInvoice(invoiceNumber):
         # load "Invoice" table
         dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
         table = dynamodb.Table('Invoice')
 
-        # add necessary info for invoice
-        item = {}
-        item["Invoice #"] = invoiceNumber
-        item["Invoice Date"] = invoiceDate
-        item["P.O.#"] = PO
-        item["Bill To"] = billTo
-        item["Ship To"] = shipTo
-        item["Due Date"] = dueDate
-        item["Customer Name"] = cusName
+        response = table.query(
+                KeyConditionExpression=Key('Invoice #').eq(invoiceNumber)
+        )
 
-        # if there is any transaction details
-        if len(details) != 0:
-                additem = []
-                # calculate each transaction amount and put in additem dir
-                for trans in details:
-                        amount = 0.00
-                        # calculate single transaction amount
-                        amount = str("%.2f" % (int(trans[0]) * float(trans[2])))
-                        trans.append(amount)
-                        additem.append(trans)
-                item["Details"] = additem
+        # total Amount
+        total = 0.00
 
-        # upload table
-        table.put_item(Item = item)
-
-
+        if not len(response['Items']) == 0:
+                x = response['Items'][0]
+                y = response['Items'][0]['Details']
+                x.pop('Details', None)
+                for price in y:
+                        total += float(price[3])
+                return x, y, total
+        else:
+                return None, None, None
+                
 def customerQueryInvoice(invoiceNumber):
         # load "Invoice" table
         dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)

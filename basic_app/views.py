@@ -14,7 +14,7 @@ from .forms import UploadFileForm
 from django.urls import reverse_lazy
 from django.views import generic
 from django.views.generic import CreateView, ListView, UpdateView, TemplateView
-from .dbFinalVersion import customerQueryProof, customerQueryInvoice, partialEmployeeScanOrder, customerQueryOrder, showFullOrder, ChinaEmployeeUpdatePicture, generateOrUpdateOrderAndProof, partialScanProof, queryProof, partialEmployeeScanInvoice
+from .dbFinalVersion import customerQueryProof, customerQueryInvoice, partialEmployeeScanOrder, customerQueryOrder, showFullOrder, ChinaEmployeeUpdatePicture, generateOrUpdateOrderAndProof, partialScanProof, queryProof, partialEmployeeScanInvoice, generateOrUpdateInvoice
 import itertools
 from .upsBackEnd import initializeParas, getOptionWithTime, makeServiceWithPrice, getMinOption
 from django.contrib.staticfiles import finders
@@ -125,21 +125,34 @@ def OrderCreatePage(request):
 @supervisor_or_staffInUSA_required
 def CreateInvoice(request):
     result = 'No option for this pickUpDate and deliveyDate'
+    invoiceNumber = request.POST.get('invoiceNumber', '-1')
     if request.method == 'POST':
         print(request.POST)
-        invoiceNumber = request.POST.get('invoiceNumber', '-1')
         input = request.POST.dict()
         del input['csrfmiddlewaretoken']
         if (invoiceNumber == '-1'):
             print(request.POST)
 
-            # initializeParas(request.POST)
-            # li = getOptionWithTime()
-            # makeServiceWithPrice(li)
-            # res = getMinOption(li)
-            # if len(res) > 1:
-            #     #print(res)
-            #     result = res[0]+', deliveried by '+res[4]+' at '+res[5]+' with '+res[8]+' '+res[9]
+            weight = request.POST.get('wd', '-1')
+            if (weight != '-1'):
+                initializeParas(request.POST)
+                li = getOptionWithTime()
+                makeServiceWithPrice(li)
+                res = getMinOption(li)
+                if len(res) > 1:
+                    result = res[0]+', deliveried by '+res[4]+' at '+res[5]+' with '+res[8]+' '+res[9]
+            else:
+                inputlist = list(input.values())
+                firstpart = inputlist[:7]
+                secondpart = inputlist[7:]
+                listnestlist = []
+                print(secondpart)
+                for x in range(len(secondpart)//3):
+                    temp = secondpart[x:x+3]
+                    listnestlist.append(temp)
+                print(listnestlist)
+                generateOrUpdateInvoice(firstpart, listnestlist)
+                
         else:
             data = request.POST
             print(data)
