@@ -14,7 +14,7 @@ from .forms import UploadFileForm
 from django.urls import reverse_lazy
 from django.views import generic
 from django.views.generic import CreateView, ListView, UpdateView, TemplateView
-from .dbFinalVersion import customerQueryProof, customerQueryInvoice, partialEmployeeScanOrder, customerQueryOrder, showFullOrder, ChinaEmployeeUpdatePicture, generateOrUpdateOrderAndProof, partialScanProof, queryProof, partialEmployeeScanInvoice, generateOrUpdateInvoice, employeeQueryInvoice
+from .dbFinalVersion import customerQueryProof, customerQueryInvoice, partialEmployeeScanOrder, customerQueryOrder, showFullOrder, ChinaEmployeeUpdatePicture, generateOrUpdateOrderAndProof, partialScanProof, queryProof, partialEmployeeScanInvoice, generateOrUpdateInvoice, employeeQueryInvoice, deleteItem
 import itertools
 from .upsBackEnd import initializeParas, getOptionWithTime, makeServiceWithPrice, getMinOption
 from django.contrib.staticfiles import finders
@@ -75,7 +75,9 @@ def CustomerInUSAOrderPage(request):
     list_all_order = None
     if request.method == 'POST':
         # to add new row order
-        pass
+        orderNumber = request.POST.get('orderID')
+        deleteItem('Order',orderNumber)
+        return redirect(reverse('basic_app:StaffInUSAMangement'))
     else:
         list_all_order = partialEmployeeScanOrder()
     return render(request, 'basic_app/staff_in_usa_order_page.html', {'list_all_order':list_all_order })
@@ -100,6 +102,7 @@ def OrderCreatePage(request):
             print(type(listInput))
             print(fistpart)
             generateOrUpdateOrderAndProof(fistpart)
+            return redirect(reverse('basic_app:StaffInUSAMangement'))
 
 
         else:
@@ -107,16 +110,13 @@ def OrderCreatePage(request):
             print("this is edit page")
             print("attribute lengh"+str(len(listpart)))
             extraRow = len(dictpart)
-            print(extraRow)
-            print(dictpart)
             namelist = list(range(15,15+2*extraRow+1))
             namelist = namelist[::2]
             container = []
             for key, value in dictpart.items():
                 temp = [key, value]
                 container.append(temp)
-            newCompound = dict(zip(namelist,container))
-            print(newCompound)            
+            newCompound = dict(zip(namelist,container))        
     else:
         pass
     return render(request, 'basic_app/order_create.html', {'listpart':listpart, 'newCompound': newCompound })
@@ -155,6 +155,7 @@ def CreateInvoice(request):
                 print(len(firstpart))
                 print(len(secondpart))
                 generateOrUpdateInvoice(firstpart, listnestlist)
+                return redirect(reverse('basic_app:StaffInUSAInvoicemangement'))
                 
         else:
             firstpart,secondpart = employeeQueryInvoice(invoiceNumber)
@@ -181,7 +182,11 @@ def CreateInvoice(request):
 def invoiceCreatePage(request):
     listofInvoices = None
     if request.method == "POST":
-        pass
+        invoiceNumber = request.POST.get('invoiceNumber')
+        deleteItem('Invoice', invoiceNumber)
+        return redirect(reverse('basic_app:StaffInUSAInvoicemangement'))
+
+        
     else:
         listofInvoices = partialEmployeeScanInvoice()    
     return render(request, 'basic_app/staff_in_USA_invoice_manage.html', {'listofInvoices':listofInvoices})

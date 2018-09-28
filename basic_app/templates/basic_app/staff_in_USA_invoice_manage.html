@@ -2,7 +2,7 @@
 {% block body_block %}
 <div class="container">
   <div class="jumbotron">
-    <h1 class="display-4">This page for staff in USA mangament</h1>
+    <h1 class="display-4">This page for staff in USA managament</h1>
     <p class="lead">Items below are all invoices in our systems </p>
   </div><!-- /.jumbotron -->
 
@@ -11,9 +11,8 @@
         <input value=" New Invoice" class="btn btn-primary js-create-order" type="submit">
       </form>
   </p>
-    
 
-
+  <!-- Modal -->
 
   <table class = "table table-striped">
         <thead>
@@ -41,15 +40,17 @@
                         </button>
                         </form>
                     </td>
-                    <td>
-                        <form action=""method="POST">
-                        {% csrf_token %}
-                        <button type="submit"
-                                class="btn btn-danger btn-sm js-delete-order"
-                                data-url="#">
-                          <span class="glyphicon glyphicon-trash"></span> Delete
-                        </button>
+                    <td>  
+                      <form action="{% url 'basic_app:StaffInUSAInvoicemangement' %}" method="POST" onsubmit="window.mytest()" >
+                          {% csrf_token %}
+                          <input type="hidden" value="{{invoice.0}}" name="invoiceNumber">
+                          <button class="btn btn-danger btn-sm js-delete-order" data-toggle="modal" data-target="#myModal">
+                              <span class="glyphicon glyphicon-trash"></span> Delete
+                          </button>
                       </form>
+                      <script type="text/javascript">window.mytest = function() { 
+                        var isValid = confirm('Are you sure to delete?'
+                        );if (!isValid) { event.preventDefault();  alert("It wont delete. Check out!");}}</script>
                       </td>
                     </tr>
                   {% empty %}

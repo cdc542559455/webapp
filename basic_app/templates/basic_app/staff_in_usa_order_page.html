@@ -42,14 +42,18 @@
                         </form>
                     </td>
                     <td>
-                        <form action=""method="POST">
+                        <form action="{% url 'basic_app:StaffInUSAMangement' %}" method="POST" onsubmit="window.mytest()">
                         {% csrf_token %}
-                        <button type="submit"
+                        <input type="hidden" value="{{order.0}}" name="orderID">
+                        <button type="submit" 
                                 class="btn btn-danger btn-sm js-delete-order"
                                 data-url="#">
                           <span class="glyphicon glyphicon-trash"></span> Delete
                         </button>
                       </form>
+                      <script type="text/javascript">window.mytest = function() { 
+                        var isValid = confirm('Are you sure to delete?'
+                        );if (!isValid) { event.preventDefault();  alert("It wont delete. Check out!");}}</script>
                       </td>
                     </tr>
                   {% empty %}

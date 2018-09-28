@@ -328,6 +328,18 @@ def showFullOrder(orderNumber):
 		addtionDirct.pop("Attached_picture")
 	return resultList, addtionDirct
 
+def deleteItem(tableName, primaryKey):
+	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
+	table = dynamodb.Table(tableName)
+	k = {}
+	if tableName is "Invoice":
+		k["Invoice #"] = str(primaryKey)
+	elif tableName is "Order":
+		k["Order Number"] = str(primaryKey) 
+	else:
+		return
+	table.delete_item(Key = k)
+
 
 def partialEmployeeScanOrder():
     dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
