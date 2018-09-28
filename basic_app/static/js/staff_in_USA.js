@@ -18,9 +18,9 @@ function addRow() {
 }
 
 function addDetail(){
-    alert("hello");
     var parent = document.getElementById("detailbody");
     var row = parent.childElementCount;
+    console.log(row)
     var newRow = document.createElement("TR");
     var newTH1 = document.createElement("TH");
     var newTH2 = document.createElement("TH");

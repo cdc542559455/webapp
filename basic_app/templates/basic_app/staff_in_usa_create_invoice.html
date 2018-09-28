@@ -131,15 +131,15 @@
                     <th scope="col">DESCRIPTION</td>
                     <th scope="col">UNIT PRICE</th>
                 </tr>
-                {% for key, items in secondpart.items %}
-                <tr>
-                    <th><input type="number" step="any" name="{{key}}" value="{{items.0}}"></th>
-                    <th><input type="text" name="{{key | add:"1"}}" value="{{items.1}}"></th>
-                    <th><input type="number" step="any" name="{{key | add:"2"}}" value="{{items.2}}"></th>
-                </tr>
-                {% endfor %}
             </thead>
             <tbody id = "detailbody">
+                {% for key, items in secondpart.items %}
+                    <tr>
+                        <th><input type="number" step="any" name="{{key}}" value="{{items.0}}"></th>
+                        <th><input type="text" name="{{key | add:"1"}}" value="{{items.1}}"></th>
+                        <th><input type="number" step="any" name="{{key | add:"2"}}" value="{{items.2}}"></th>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
         <input type="button" align="right" class="btn btn-primary float-right" value="Add New Row" onclick="addDetail();" id="add-row">
