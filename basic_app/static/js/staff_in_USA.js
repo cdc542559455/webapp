@@ -18,6 +18,7 @@ function addRow() {
 }
 
 function addDetail(){
+    alert("hello");
     var parent = document.getElementById("detailbody");
     var row = parent.childElementCount;
     var newRow = document.createElement("TR");

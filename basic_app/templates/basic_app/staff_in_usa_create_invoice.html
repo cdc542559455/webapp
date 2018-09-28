@@ -91,31 +91,31 @@
             <tbody id = "mytbody">
                 <tr>
                     <td>Invoice #</td>
-                    <td><input type="text" name = "1"></td>
+                    <td><input type="text" name = "1" value="{{firstpart.0}}"></td>
                 </tr>
                 <tr>
                     <td>Invoice Date</td>
-                    <td><input type="text" name = "2"></td>
+                    <td><input type="text" name = "2" value="{{firstpart.1}}"></td>
                 </tr>
                 <tr>
                     <td>P.O.#</td>
-                    <td><input type="text" name = "3"></td>
+                    <td><input type="text" name = "3" value="{{firstpart.2}}"></td>
                 </tr>
                 <tr>
                     <td>Bill To</td>
-                    <td><input type="text" name = "4"></td>
+                    <td><input type="text" name = "4" value="{{firstpart.3}}"></td>
                 </tr>
                 <tr>
                     <td>Ship To</td>
-                    <td><input type="text" name = "5"></td>
+                    <td><input type="text" name = "5" value="{{firstpart.4}}"></td>
                 </tr>
                 <tr>
                     <td>Due Date</td>
-                    <td><input type="text" name = "6"></td>
+                    <td><input type="text" name = "6" value="{{firstpart.5}}"></td>
                 </tr>
                 <tr>
                     <td>Customer Name</td>
-                    <td><input type="text" name = "7"></td>
+                    <td><input type="text" name = "7" value="{{firstpart.6}}"></td>
                 </tr>
                 
             </tbody>
@@ -126,11 +126,18 @@
         
         <table class="table table-bordered" >
             <thead>
-                <tr >
+                <tr>
                     <th scope="col">QTY</td>
                     <th scope="col">DESCRIPTION</td>
                     <th scope="col">UNIT PRICE</th>
                 </tr>
+                {% for key, items in secondpart.items %}
+                <tr>
+                    <th><input type="number" step="any" name="{{key}}" value="{{items.0}}"></th>
+                    <th><input type="text" name="{{key | add:"1"}}" value="{{items.1}}"></th>
+                    <th><input type="number" step="any" name="{{key | add:"2"}}" value="{{items.2}}"></th>
+                </tr>
+                {% endfor %}
             </thead>
             <tbody id = "detailbody">
             </tbody>

@@ -65,27 +65,27 @@ def customerQueryInvoice(invoiceNumber):
         else:
                 return None, None, None
                 
-def customerQueryInvoice(invoiceNumber):
-        # load "Invoice" table
-        dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
-        table = dynamodb.Table('Invoice')
+# def customerQueryInvoice(invoiceNumber):
+#         # load "Invoice" table
+#         dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
+#         table = dynamodb.Table('Invoice')
 
-        response = table.query(
-                KeyConditionExpression=Key('Invoice #').eq(invoiceNumber)
-        )
+#         response = table.query(
+#                 KeyConditionExpression=Key('Invoice #').eq(invoiceNumber)
+#         )
 
-        # total Amount
-        total = 0.00
+#         # total Amount
+#         total = 0.00
 
-        if not len(response['Items']) == 0:
-                x = response['Items'][0]
-                y = response['Items'][0]['Details']
-                x.pop('Details', None)
-                for price in y:
-                        total += float(price[3])
-                return x, y, total
-        else:
-                return None, None, None
+#         if not len(response['Items']) == 0:
+#                 x = response['Items'][0]
+#                 y = response['Items'][0]['Details']
+#                 x.pop('Details', None)
+#                 for price in y:
+#                         total += float(price[3])
+#                 return x, y, total
+#         else:
+#                 return None, None, None
 
 
 # up load a file path to s3 and return the public address of the file
@@ -376,6 +376,31 @@ def queryProof(PONumber):
 		result['Attached_picture'] = r['Attached_picture']
 	return result
 
+def employeeQueryInvoice(invoiceNumber):
+	# load "Invoice" table
+        dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
+        table = dynamodb.Table('Invoice')
+
+        response = table.query(
+                KeyConditionExpression=Key('Invoice #').eq(invoiceNumber)
+        )   
+	
+        result = []
+        result2 = []
+        if not len(response['Items']) == 0:
+                r = response['Items'][0]
+                result.append(r["Invoice #"])
+                result.append(r['Invoice Date'])
+                result.append(r['P.O.#'])
+                result.append(r['Bill To'])
+                result.append(r['Ship To'])
+                result.append(r['Due Date'])
+                result.append(r['Customer Name'])
+                for detail in r['Details']:
+                        result2.append(detail[:3])
+        return result, result2
+	
+
 def generateOrUpdateOrderAndProof(info):
 	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
 	orderTable = dynamodb.Table('Order')
@@ -473,4 +498,7 @@ if __name__ == '__main__':
         # print(l)
         # generateOrUpdateOrderAndProof(["333333sss", "9-24-2018", "9-28-2018", "AIR", "230120 8th AVE SE", "IBN-300", "10oz", "wood", "100", "red", "wtf", "blue",
 	#                       "Alex Xie", "100", "C:\\Users\\lokic\\OneDrive\\desktop\\Actual_Project\\webapp\\googluck.jpg", { "tryAdd":"YES", "tryAdd2":"WORKED"}])
-        print(queryProof('700'))
+       x,y = employeeQueryInvoice('666')
+       print(x)
+       print(y)
+       print(len(y))

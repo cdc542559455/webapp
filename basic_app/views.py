@@ -14,7 +14,7 @@ from .forms import UploadFileForm
 from django.urls import reverse_lazy
 from django.views import generic
 from django.views.generic import CreateView, ListView, UpdateView, TemplateView
-from .dbFinalVersion import customerQueryProof, customerQueryInvoice, partialEmployeeScanOrder, customerQueryOrder, showFullOrder, ChinaEmployeeUpdatePicture, generateOrUpdateOrderAndProof, partialScanProof, queryProof, partialEmployeeScanInvoice, generateOrUpdateInvoice
+from .dbFinalVersion import customerQueryProof, customerQueryInvoice, partialEmployeeScanOrder, customerQueryOrder, showFullOrder, ChinaEmployeeUpdatePicture, generateOrUpdateOrderAndProof, partialScanProof, queryProof, partialEmployeeScanInvoice, generateOrUpdateInvoice, employeeQueryInvoice
 import itertools
 from .upsBackEnd import initializeParas, getOptionWithTime, makeServiceWithPrice, getMinOption
 from django.contrib.staticfiles import finders
@@ -43,7 +43,7 @@ def CustomerProofSearch(request):
         value = str(request.POST.get('orderNumber'))
         hasPost = True
         dic = queryProof(value)
-        if (dic != None):
+        if (dic):
             pic_src = dic['Attached_picture']
             dic = dict(itertools.islice(dic.items(),1, len(dic)))
     else:
@@ -124,17 +124,17 @@ def OrderCreatePage(request):
 @login_required
 @supervisor_or_staffInUSA_required
 def CreateInvoice(request):
+    firstpart = None
+    secondpart = None
     result = 'No option for this pickUpDate and deliveyDate'
     invoiceNumber = request.POST.get('invoiceNumber', '-1')
     if request.method == 'POST':
-        print(request.POST)
         input = request.POST.dict()
         del input['csrfmiddlewaretoken']
         if (invoiceNumber == '-1'):
-            print(request.POST)
-
             weight = request.POST.get('wd', '-1')
             if (weight != '-1'):
+                print("We have go through it")
                 initializeParas(request.POST)
                 li = getOptionWithTime()
                 makeServiceWithPrice(li)
@@ -142,24 +142,39 @@ def CreateInvoice(request):
                 if len(res) > 1:
                     result = res[0]+', deliveried by '+res[4]+' at '+res[5]+' with '+res[8]+' '+res[9]
             else:
+                print("oh shit")
                 inputlist = list(input.values())
                 firstpart = inputlist[:7]
                 secondpart = inputlist[7:]
                 listnestlist = []
                 print(secondpart)
                 for x in range(len(secondpart)//3):
-                    temp = secondpart[x:x+3]
+                    temp = secondpart[3*x:3*x+3]
                     listnestlist.append(temp)
                 print(listnestlist)
+                print(len(firstpart))
+                print(len(secondpart))
                 generateOrUpdateInvoice(firstpart, listnestlist)
                 
         else:
-            data = request.POST
-            print(data)
+            firstpart,secondpart = employeeQueryInvoice(invoiceNumber)
+            print('****************************************')
+            print(firstpart)
+            print('****************************************')
+            print(secondpart)
+            print('****************************************')
+            namelist = list(range(8,8+3*len(secondpart)))
+            print('****************************************')
+            print(namelist)
+            namelist = namelist[::3]
+            print(namelist)
+            secondpart = dict(zip(namelist,secondpart))
+            print(secondpart)
+            print('****************************************')
         
     else:
         pass
-    return render(request, 'basic_app/staff_in_usa_create_invoice.html', {'result':result})
+    return render(request, 'basic_app/staff_in_usa_create_invoice.html', {'result':result, 'firstpart':firstpart, 'secondpart':secondpart})
 
 @login_required
 @supervisor_or_staffInUSA_required
@@ -219,7 +234,7 @@ def StaffInChinaOrderInDetails(request):
             print(OrderNum)
             if (OrderNum != '-1'):
                 dic = customerQueryOrder(OrderNum)
-                if (dic != None):
+                if (dic):
                     pic_src = dic['Attached_picture']
                     dic = dict(itertools.islice(dic.items(),1, len(dic)))
     else:
