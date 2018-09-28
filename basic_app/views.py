@@ -47,8 +47,7 @@ def CustomerProofSearch(request):
             pic_src = dic['Attached_picture']
             dic = dict(itertools.islice(dic.items(),1, len(dic)))
     else:
-        print("Is not Post")
-    
+        pass
     return render(request, 'basic_app/customer_proof_search.html',{'hasPost': hasPost, 'dic':dic, 'pic_src':pic_src} )
 
 
@@ -62,11 +61,9 @@ def CustomerInvoiceSearch(request):
     if request.method == 'POST':
         value = str(request.POST.get('invoiceNumber'))
         dic, list1, totalamout = customerQueryInvoice(value)
-        print(totalamout)
         hasPost = True
     else:
-        print('Is not Post FFFF')
-
+        pass
     return render(request, 'basic_app/customer_invoice_search.html', {'hasPost': hasPost, 'dic':dic, 'list1': list1, 'totalamout': totalamout} )
 
 @login_required
@@ -95,20 +92,14 @@ def OrderCreatePage(request):
             listInput = list(input.values())
             fistpart = listInput[:14]
             secondpart = listInput[14:]
-            print(secondpart)
             kk = dict(itertools.zip_longest(*[iter(secondpart)]*2, fillvalue=""))
             fistpart.append(kk)
-            print(type(kk))
-            print(type(listInput))
-            print(fistpart)
             generateOrUpdateOrderAndProof(fistpart)
             return redirect(reverse('basic_app:StaffInUSAMangement'))
 
 
         else:
             listpart,dictpart = showFullOrder(orderID)
-            print("this is edit page")
-            print("attribute lengh"+str(len(listpart)))
             extraRow = len(dictpart)
             namelist = list(range(15,15+2*extraRow+1))
             namelist = namelist[::2]
@@ -126,7 +117,7 @@ def OrderCreatePage(request):
 def CreateInvoice(request):
     firstpart = None
     secondpart = None
-    result = 'No option for this pickUpDate and deliveyDate'
+    result = ""
     invoiceNumber = request.POST.get('invoiceNumber', '-1')
     if request.method == 'POST':
         input = request.POST.dict()
@@ -134,45 +125,34 @@ def CreateInvoice(request):
         if (invoiceNumber == '-1'):
             weight = request.POST.get('wd', '-1')
             if (weight != '-1'):
-                print("We have go through it")
                 initializeParas(request.POST)
                 li = getOptionWithTime()
                 makeServiceWithPrice(li)
                 res = getMinOption(li)
                 if len(res) > 1:
                     result = res[0]+', deliveried by '+res[4]+' at '+res[5]+' with '+res[8]+' '+res[9]
+                invoiceNumber = request.POST.get('idx', '-1')
+                if (invoiceNumber != '-1'):
+                    firstpart,secondpart = employeeQueryInvoice(invoiceNumber)
+                    namelist = list(range(8,8+3*len(secondpart)))
+                    namelist = namelist[::3]
+                    secondpart = dict(zip(namelist,secondpart))
             else:
-                print("oh shit")
                 inputlist = list(input.values())
                 firstpart = inputlist[:7]
                 secondpart = inputlist[7:]
                 listnestlist = []
-                print(secondpart)
                 for x in range(len(secondpart)//3):
                     temp = secondpart[3*x:3*x+3]
                     listnestlist.append(temp)
-                print(listnestlist)
-                print(len(firstpart))
-                print(len(secondpart))
                 generateOrUpdateInvoice(firstpart, listnestlist)
                 return redirect(reverse('basic_app:StaffInUSAInvoicemangement'))
                 
         else:
             firstpart,secondpart = employeeQueryInvoice(invoiceNumber)
-            print('****************************************')
-            print(firstpart)
-            print('****************************************')
-            print(secondpart)
-            print('****************************************')
             namelist = list(range(8,8+3*len(secondpart)))
-            print('****************************************')
-            print(namelist)
             namelist = namelist[::3]
-            print(namelist)
             secondpart = dict(zip(namelist,secondpart))
-            print(secondpart)
-            print('****************************************')
-        
     else:
         pass
     return render(request, 'basic_app/staff_in_usa_create_invoice.html', {'result':result, 'firstpart':firstpart, 'secondpart':secondpart})
@@ -265,7 +245,6 @@ def proofDetailsView(request):
     pic_src = None
     dic = None
     if request.method == 'POST':
-        print(request.POST)
         Num = request.POST.get('number','-1')
         dic = queryProof(Num)
         if (dic != None):

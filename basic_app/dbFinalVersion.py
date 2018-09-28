@@ -65,30 +65,6 @@ def customerQueryInvoice(invoiceNumber):
         else:
                 return None, None, None
                 
-# def customerQueryInvoice(invoiceNumber):
-#         # load "Invoice" table
-#         dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
-#         table = dynamodb.Table('Invoice')
-
-#         response = table.query(
-#                 KeyConditionExpression=Key('Invoice #').eq(invoiceNumber)
-#         )
-
-#         # total Amount
-#         total = 0.00
-
-#         if not len(response['Items']) == 0:
-#                 x = response['Items'][0]
-#                 y = response['Items'][0]['Details']
-#                 x.pop('Details', None)
-#                 for price in y:
-#                         total += float(price[3])
-#                 return x, y, total
-#         else:
-#                 return None, None, None
-
-
-# up load a file path to s3 and return the public address of the file
 def uploadToS3(path):
 	try:
 		open(path, 'r')
@@ -255,20 +231,15 @@ def partialEmployeeScanInvoice():
             # total Amount
             total = 0.00
             oneInvoice = []
-            print("Invoice #: " + r["Invoice #"])
-            print("Invoice Date: " + r["Invoice Date"])
             if (len(r["Details"]) != 0):
                 for l in r["Details"]:
                     total += float(l[3])
-            print("Total: " + str("%.2f" % total))
-            print()
             oneInvoice.append(r["Invoice #"])
             oneInvoice.append(r["Invoice Date"])
             oneInvoice.append(str("%.2f" % total))
             result.append(oneInvoice)
     else:
-        print("No result found")
-    print(result)
+            pass
     return result
 
 def partialScanProof():

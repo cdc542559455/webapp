@@ -10,9 +10,9 @@ o2c = {'UPS Next Day Air Early':'14', 'UPS Next Day Air':'01',
 	   'UPS Standard':'11', 'UPS Worldwide Express':'07', 'UPS Worldwide Express Plus':'54',
 	   'UPS Worldwide Expedited':'08', 'UPS Express Saver':'65', 'UPS Worldwide Saver':'28'}
 
-licenseNum = ''
-userId = ''
-password = ''
+licenseNum = 'AD4F2BA7AC1EBAC8'
+userId = 'cdc5425559455'
+password = 'Woshidahaoren6@'
 version ="""<?xml version="1.0"?>""" 
 
 shipperCity = None
