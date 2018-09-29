@@ -13,7 +13,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.views.generic import CreateView, ListView, UpdateView, TemplateView
 from .dbFinalVersion import customerQueryProof, customerQueryInvoice, partialEmployeeScanOrder
-from .upsBackEnd import initializeParas, getOptionWithTime, makeServiceWithPrice, getMinOption
+from .upsBackEnd import getOptionWithTime, makeServiceWithPrice, getMinOption
 # Create your views here.
 def home(request):
     return render(request,'basic_app/home.html')
@@ -102,10 +102,10 @@ def CreateInvoice(request):
     result = 'No option for this pickUpDate and deliveyDate'
     if request.method == 'POST':
         #print("You Succeed!")
-        initializeParas(request.POST)
-        li = getOptionWithTime()
-        makeServiceWithPrice(li)
-        res = getMinOption(li)
+        #initializeParas(request.POST.dict())
+        li = getOptionWithTime(request.POST)
+        makeServiceWithPrice(li, request.POST)
+        res = getMinOption(li, request.POST)
         if len(res) > 1:
             #print(res)
             result = res[0]+', deliveried by '+res[4]+' at '+res[5]+' with '+res[8]+' '+res[9]
