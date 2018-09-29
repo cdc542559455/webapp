@@ -59,7 +59,8 @@ def generateOrUpdateOrderAndProof(info):
 	add = info[14]
 	if (len(add) != 0):
 		for k, v in add.items():
-			orderItem[k] = v
+			if k != "" and v != "":
+				orderItem[k] = v
 	#print(orderItem)
 	# upload order table
 	orderTable.put_item(Item = orderItem)
@@ -171,7 +172,7 @@ def customerQueryInvoice(invoiceNumber):
                         total += float(price[3])
                 return x, y, total
         else:
-                return None, None, None	
+                return None, None, None
 
 
 def customerQueryOrder(orderNumber):
@@ -291,3 +292,4 @@ def ChinaEmployeeUpdatePicture(orderID, path):
 
 if __name__ == '__main__':
 	print()
+	generateOrUpdateOrderAndProof
