@@ -170,8 +170,24 @@ def partialEmployeeScanInvoice():
 			result.append(oneInvoice)
 	else:
 		pass
-	return result	
-	
+	return result
+
+def chinaQuery(orderNumber):
+	# load "Order" table
+	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
+	table = dynamodb.Table('Order')
+	response = table.query(
+		KeyConditionExpression=Key('Order Number').eq(orderNumber)
+	)
+	if  len(response['Items']) != 0:
+		r = response['Items'][0]
+		r.pop('PO Number')
+		return r
+	else:
+		return None
+
+
+
 def customerQueryOrder(orderNumber):
         # load "Order" table
         dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
@@ -179,21 +195,10 @@ def customerQueryOrder(orderNumber):
         response = table.query(
                 KeyConditionExpression=Key('Order Number').eq(orderNumber)
         )
-        if not len(response['Items']) == 0:
+        if  len(response['Items']) != 0:
                 return response['Items'][0]
         else:
                 return None		
-
-
-def chinaQueryOrder(orderNumber):
-        # load "Order" table
-        dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
-        table = dynamodb.Table('Order')
-        response = table.query(
-                KeyConditionExpression=Key('Order Number').eq(orderNumber)
-		)
-
-
 
 def queryProof(PONumber):
 	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
@@ -288,15 +293,23 @@ def ChinaEmployeeUpdatePicture(orderID, path):
 	table = dynamodb.Table('Order')
 	pa =  "https://s3-us-west-2.amazonaws.com/nicealbum/" + path
 	Keys = {}
-	Keys["Order Number"] = str(orderID)
-	table.update_item(
-	    Key = Keys,
-	    UpdateExpression='SET Attached_picture = :val1',
-	    ExpressionAttributeValues={
-	            ':val1': pa
-	    }
-	)
+	response = table.query(
+                KeyConditionExpression=Key('Order Number').eq(orderID)
+        )
+	if len(response['Items']) == 0:
+		return '-1'
+	else:
+		Keys["Order Number"] = str(orderID)
+		table.update_item(
+	    	Key = Keys,
+	    	UpdateExpression='SET Attached_picture = :val1',
+	    	ExpressionAttributeValues={
+				':val1': pa
+	    	}
+		)
+		return str(orderID)
+	
 
 if __name__ == '__main__':
 	print()
-	#print(customerQueryOrder("555"))
+	print((chinaQuery("333333333333333")))

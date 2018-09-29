@@ -9,7 +9,7 @@
   <h2 id = "myh2">Create or Update form</h2>
   <p class="lead" id="myp">Order form and information :</p>
 </div>
-
+<div class="col-xs-1" align="center"><img class="img-thumbnail img-fluid" src={{pic_src}} alt="No graph or graph crashes"></div>
 <form action="{% url 'basic_app:OrderCreating' %}" method="POST" id="post_form">
         {% csrf_token %}
         <label for="npc_form">Forms: </label>
@@ -77,9 +77,14 @@
                     <td></td>
                 </tr>
                 <tr>
-                    <td>Design Graph</td>
-                    <td><input type="file" name ="14" accept="image/" value="{{listpart.13}}"></td>
-                </tr>
+                        <th>
+                            <input name = "image" id="photoupload" type="file" accept="image/*">
+                        </th>
+                        <th>
+                            {% csrf_token %}
+                            <input type="button" id = "addphoto" onclick= addPhoto('myalbum') value="upload grpah" > </input>
+                        </th>
+                    </tr>
                 {% for k, v1 in newCompound.items %}
                 <tr>
                     <td><input type="text" value = "{{v1.0}}" name = "{{k}}"></td>

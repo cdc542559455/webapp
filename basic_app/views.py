@@ -15,7 +15,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.views.generic import CreateView, ListView, UpdateView, TemplateView
 from .dbFinalVersion import partialEmployeeScanOrder, customerQueryOrder, showFullOrder, ChinaEmployeeUpdatePicture, generateOrUpdateOrderAndProof,\
-partialScanProof, queryProof, partialEmployeeScanInvoice, generateOrUpdateInvoice, employeeQueryInvoice, deleteItem, customerQueryInvoice
+partialScanProof, queryProof, partialEmployeeScanInvoice, generateOrUpdateInvoice, employeeQueryInvoice, deleteItem, customerQueryInvoice, chinaQuery, ChinaEmployeeUpdatePicture
 import itertools
 from django.contrib.staticfiles import finders
 
@@ -86,6 +86,7 @@ def CustomerInUSAOrderPage(request):
 def OrderCreatePage(request):
     listpart = None
     newCompound = None
+    pic_src = None
     if request.method == 'POST':
         orderID = request.POST.get('orderID', '-1')
         input = request.POST.dict()
@@ -102,6 +103,7 @@ def OrderCreatePage(request):
 
         else:
             listpart,dictpart = showFullOrder(orderID)
+            pic_src = listpart[13]
             extraRow = len(dictpart)
             namelist = list(range(15,15+2*extraRow+1))
             namelist = namelist[::2]
@@ -112,7 +114,7 @@ def OrderCreatePage(request):
             newCompound = dict(zip(namelist,container))        
     else:
         pass
-    return render(request, 'basic_app/order_create.html', {'listpart':listpart, 'newCompound': newCompound })
+    return render(request, 'basic_app/order_create.html', {'listpart':listpart, 'newCompound': newCompound, 'pic_src':pic_src })
 
 @login_required
 @supervisor_or_staffInUSA_required
@@ -210,13 +212,19 @@ def StaffInChinaOrderInDetails(request):
     pic_src = None
     if request.method == 'POST':
         OrderNum = request.POST.get('orderID','-1')
-        imageName = request.POST.get('image')
-        
-        if (OrderNum != '-1'):
-            dic = customerQueryOrder(OrderNum)
+        if (OrderNum != '-1'):      
+            print(chinaQuery('666'))
+            print(type(chinaQuery('666')))
+            dic = chinaQuery(OrderNum)
             if (dic):
                 pic_src = dic['Attached_picture']
                 dic = dict(itertools.islice(dic.items(),1, len(dic)))
+                del dic['Attached_picture']
+        else:
+            imageName = request.POST.get('image')
+            secondNum = request.POST.get('secondNumber')
+            ChinaEmployeeUpdatePicture(secondNum, imageName)
+            return redirect(reverse('basic_app:StaffInChinaManagement'))
     else:
         print("this is not POST")
 
