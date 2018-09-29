@@ -9,8 +9,6 @@ function addRow() {
     var newInput = document.createElement("INPUT");
     var newInput2 = document.createElement("INPUT");
     newInput.setAttribute("name",nameLeft);
-    newInput.setAttribute("required","");
-    newInput2.setAttribute("required","");
     newInput2.setAttribute("name", nameRIght);
     newTH.appendChild(newInput);
     newTH2.appendChild(newInput2);
@@ -36,9 +34,6 @@ function addDetail(){
     newInput3.setAttribute("name",(row-1)*3+13);
     newInput3.setAttribute("type", 'number')
     newInput3.setAttribute("step","any")
-    newInput1.setAttribute("required","");
-    newInput2.setAttribute("required","");
-    newInput3.setAttribute("required","");
     newTH1.appendChild(newInput1);
     newTH2.appendChild(newInput2);
     newTH3.appendChild(newInput3);

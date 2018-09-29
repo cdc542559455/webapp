@@ -32,12 +32,17 @@ def generateOrUpdateInvoice(info, additional):
 	if len(additional) != 0:
 		add = []
 		for trans in additional:
-			amount = 0.00
-			# calculate single transaction amount
-			amount = str("%.2f" % (int(trans[0]) * float(trans[2])))
-			trans.append(amount)
-			add.append(trans)
-		item["Details"] = add
+			if (
+			    len(trans[0]) !=0 and len(trans[1]) !=0 and 
+			    len(trans[2]) != 0
+			):
+				amount = 0.00
+				# calculate single transaction amount
+				amount = str("%.2f" % (int(trans[0]) * float(trans[2])))
+				trans.append(amount)
+				add.append(trans)					
+		if len(add) != 0:
+			item["Details"] = add
 			
 	# upload table	
 	table.put_item(Item = item) 	
@@ -481,7 +486,4 @@ if __name__ == '__main__':
         # print(l)
         # generateOrUpdateOrderAndProof(["333333sss", "9-24-2018", "9-28-2018", "AIR", "230120 8th AVE SE", "IBN-300", "10oz", "wood", "100", "red", "wtf", "blue",
 	#                       "Alex Xie", "100", "C:\\Users\\lokic\\OneDrive\\desktop\\Actual_Project\\webapp\\googluck.jpg", { "tryAdd":"YES", "tryAdd2":"WORKED"}])
-       x,y = employeeQueryInvoice('666')
-       print(x)
-       print(y)
-       print(len(y))
+       print()

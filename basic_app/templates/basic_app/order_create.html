@@ -82,8 +82,8 @@
                 </tr>
                 {% for k, v1 in newCompound.items %}
                 <tr>
-                    <td><input type="text" value = "{{v1.0}}" name = "{{k}}" required></td>
-                    <td><input type="text" value = "{{v1.1}}" name = "{{k | add:"1"}}" required></td>
+                    <td><input type="text" value = "{{v1.0}}" name = "{{k}}"></td>
+                    <td><input type="text" value = "{{v1.1}}" name = "{{k | add:"1"}}"></td>
                 </tr>
                 {% endfor %}
             </tbody>

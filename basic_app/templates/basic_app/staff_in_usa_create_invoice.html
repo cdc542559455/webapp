@@ -135,9 +135,9 @@
             <tbody id = "detailbody">
                 {% for key, items in secondpart.items %}
                     <tr>
-                        <th><input type="number" step="any" name="{{key}}" value="{{items.0}}" required></th>
-                        <th><input type="text" name="{{key | add:"1"}}" value="{{items.1}}" required></th>
-                        <th><input type="number" step="any" name="{{key | add:"2"}}" value="{{items.2}}" required></th>
+                        <th><input type="number" step="any" name="{{key}}" value="{{items.0}}"></th>
+                        <th><input type="text" name="{{key | add:"1"}}" value="{{items.1}}"></th>
+                        <th><input type="number" step="any" name="{{key | add:"2"}}" value="{{items.2}}"></th>
                     </tr>
                 {% endfor %}
             </tbody>
