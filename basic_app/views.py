@@ -14,7 +14,8 @@ from .forms import UploadFileForm
 from django.urls import reverse_lazy
 from django.views import generic
 from django.views.generic import CreateView, ListView, UpdateView, TemplateView
-from .dbFinalVersion import partialEmployeeScanOrder, customerQueryOrder, showFullOrder, ChinaEmployeeUpdatePicture, generateOrUpdateOrderAndProof, partialScanProof, queryProof, partialEmployeeScanInvoice, generateOrUpdateInvoice, employeeQueryInvoice, deleteItem
+from .dbFinalVersion import partialEmployeeScanOrder, customerQueryOrder, showFullOrder, ChinaEmployeeUpdatePicture, generateOrUpdateOrderAndProof,\
+partialScanProof, queryProof, partialEmployeeScanInvoice, generateOrUpdateInvoice, employeeQueryInvoice, deleteItem, customerQueryInvoice
 import itertools
 from django.contrib.staticfiles import finders
 
@@ -207,40 +208,15 @@ def StaffInChinaOrderInDetails(request):
     dic = None
     OrderNum = None
     pic_src = None
-    uploadform = UploadFileForm()
     if request.method == 'POST':
         OrderNum = request.POST.get('orderID','-1')
-        print(OrderNum)
-        if (OrderNum == '-1'):
-            form = UploadFileForm(request.POST, request.FILES)
-            path = finders.find(form['file'])
-            searched_locations = finders.searched_locations
-            print('***********************************')
-            print(path)
-            print('***********************************')
-            print(searched_locations)
-            print('***********************************')
-            print(form.data)
-            print('***********************************')
-            print(request.FILES)
-            print('***********************************')
-            print('***********************************')
-        if (pic_src != None):
-            ChinaEmployeeUpdatePicture('666', Path(pic_src).absolute())
-            print(Path(pic_src).absolute())
-            print('go through it')
-            return redirect(reverse('basic_app:StaffInChinaManagement'))
-            
-        else:
-            print("this is POST Operation")
-            print(request.POST.dict())
-            print(type(OrderNum))
-            print(OrderNum)
-            if (OrderNum != '-1'):
-                dic = customerQueryOrder(OrderNum)
-                if (dic):
-                    pic_src = dic['Attached_picture']
-                    dic = dict(itertools.islice(dic.items(),1, len(dic)))
+        imageName = request.POST.get('image')
+        
+        if (OrderNum != '-1'):
+            dic = customerQueryOrder(OrderNum)
+            if (dic):
+                pic_src = dic['Attached_picture']
+                dic = dict(itertools.islice(dic.items(),1, len(dic)))
     else:
         print("this is not POST")
 

@@ -37,6 +37,27 @@ def generateOrUpdateInvoice(info, additional):
 	# upload table	
 	table.put_item(Item = item) 	
 
+def customerQueryInvoice(invoiceNumber):
+        # load "Invoice" table
+        dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
+        table = dynamodb.Table('Invoice')
+
+        response = table.query(
+                KeyConditionExpression=Key('Invoice #').eq(invoiceNumber)
+        )
+
+        # total Amount
+        total = 0.00
+
+        if not len(response['Items']) == 0:
+                x = response['Items'][0]
+                y = response['Items'][0]['Details']
+                x.pop('Details', None)
+                for price in y:
+                        total += float(price[3])
+                return x, y, total
+        else:
+                return None, None, None
 
 def generateOrUpdateOrderAndProof(info):
 	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
@@ -55,7 +76,7 @@ def generateOrUpdateOrderAndProof(info):
 	orderItem["Product Color"] = info[10]
 	orderItem["Customer Name"] = info[11]
 	orderItem["PO Number"] = info[12]
-	orderItem["Attached_picture"] = str(uploadToS3(info[13]))
+	orderItem["Attached_picture"] = "https://s3-us-west-2.amazonaws.com/nicealbum/" + str(info[13])
 	add = info[14]
 	if (len(add) != 0):
 		for k, v in add.items():
@@ -151,30 +172,6 @@ def partialEmployeeScanInvoice():
 		pass
 	return result	
 	
-
-def customerQueryInvoice(invoiceNumber):
-        # load "Invoice" table
-        dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
-        table = dynamodb.Table('Invoice')
-
-        response = table.query(
-                KeyConditionExpression=Key('Invoice #').eq(invoiceNumber)
-        )
-
-        # total Amount
-        total = 0.00
-
-        if not len(response['Items']) == 0:
-                x = response['Items'][0]
-                y = response['Items'][0]['Details']
-                x.pop('Details', None)
-                for price in y:
-                        total += float(price[3])
-                return x, y, total
-        else:
-                return None, None, None
-
-
 def customerQueryOrder(orderNumber):
         # load "Order" table
         dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
@@ -182,11 +179,20 @@ def customerQueryOrder(orderNumber):
         response = table.query(
                 KeyConditionExpression=Key('Order Number').eq(orderNumber)
         )
-
         if not len(response['Items']) == 0:
                 return response['Items'][0]
         else:
                 return None		
+
+
+def chinaQueryOrder(orderNumber):
+        # load "Order" table
+        dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
+        table = dynamodb.Table('Order')
+        response = table.query(
+                KeyConditionExpression=Key('Order Number').eq(orderNumber)
+		)
+
 
 
 def queryProof(PONumber):
@@ -280,16 +286,17 @@ def employeeQueryInvoice(invoiceNumber):
 def ChinaEmployeeUpdatePicture(orderID, path):
 	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
 	table = dynamodb.Table('Order')
+	pa =  "https://s3-us-west-2.amazonaws.com/nicealbum/" + path
 	Keys = {}
 	Keys["Order Number"] = str(orderID)
 	table.update_item(
 	    Key = Keys,
 	    UpdateExpression='SET Attached_picture = :val1',
 	    ExpressionAttributeValues={
-	            ':val1': path
+	            ':val1': pa
 	    }
 	)
 
 if __name__ == '__main__':
 	print()
-	generateOrUpdateOrderAndProof
+	#print(customerQueryOrder("555"))
