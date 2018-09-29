@@ -16,8 +16,9 @@ from django.views import generic
 from django.views.generic import CreateView, ListView, UpdateView, TemplateView
 from .dbFinalVersion import customerQueryProof, customerQueryInvoice, partialEmployeeScanOrder, customerQueryOrder, showFullOrder, ChinaEmployeeUpdatePicture, generateOrUpdateOrderAndProof, partialScanProof, queryProof, partialEmployeeScanInvoice, generateOrUpdateInvoice, employeeQueryInvoice, deleteItem
 import itertools
-from .upsBackEnd import initializeParas, getOptionWithTime, makeServiceWithPrice, getMinOption
 from django.contrib.staticfiles import finders
+
+from .upsBackEnd import getOptionWithTime, makeServiceWithPrice, getMinOption
 # Create your views here.
 def home(request):
     return render(request,'basic_app/home.html')
@@ -119,25 +120,43 @@ def CreateInvoice(request):
     secondpart = None
     result = ""
     invoiceNumber = request.POST.get('invoiceNumber', '-1')
+    idx = request.POST.get('idx', '-1')
+    print(idx)
     if request.method == 'POST':
         input = request.POST.dict()
         del input['csrfmiddlewaretoken']
+        print("*************************")
         if (invoiceNumber == '-1'):
             weight = request.POST.get('wd', '-1')
+            print("*************************")
+            print(weight)
+            print("*************************")
             if (weight != '-1'):
-                initializeParas(request.POST)
-                li = getOptionWithTime()
-                makeServiceWithPrice(li)
-                res = getMinOption(li)
+                li = getOptionWithTime(request.POST)
+                print("*****************************")
+                print(li)
+                print("*****************************")
+                makeServiceWithPrice(li, request.POST)
+                res = getMinOption(li, request.POST)
+                print(res)
+                print("*****************************")
                 if len(res) > 1:
                     result = res[0]+', deliveried by '+res[4]+' at '+res[5]+' with '+res[8]+' '+res[9]
-                invoiceNumber = request.POST.get('idx', '-1')
-                if (invoiceNumber != '-1'):
-                    firstpart,secondpart = employeeQueryInvoice(invoiceNumber)
+                if (idx != '-1'):
+                    print("********************************")
+                    print("inside of filling")
+                    print(idx)
+                    print("********************************")
+                    firstpart,secondpart = employeeQueryInvoice(idx)
+                    print(firstpart)
+                    print(secondpart)
+                    print("********************************")
                     namelist = list(range(8,8+3*len(secondpart)))
                     namelist = namelist[::3]
                     secondpart = dict(zip(namelist,secondpart))
+                print("out of filling")
             else:
+                print("don't have correct address")
                 inputlist = list(input.values())
                 firstpart = inputlist[:7]
                 secondpart = inputlist[7:]

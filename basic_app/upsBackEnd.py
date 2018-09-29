@@ -10,61 +10,43 @@ o2c = {'UPS Next Day Air Early':'14', 'UPS Next Day Air':'01',
 	   'UPS Standard':'11', 'UPS Worldwide Express':'07', 'UPS Worldwide Express Plus':'54',
 	   'UPS Worldwide Expedited':'08', 'UPS Express Saver':'65', 'UPS Worldwide Saver':'28'}
 
-licenseNum = 'AD4F2BA7AC1EBAC8'
-userId = 'cdc5425559455'
+licenseNum = '8D500BAC24365898'
+userId = 'cdc542559455'
 password = 'Woshidahaoren6@'
 version ="""<?xml version="1.0"?>""" 
-
 shipperCity = None
 shipperState = 'WA'
 shipperZip = '98105'
 shipperCountry = 'US'
 isShipperResident = False
-fromCity = None
-fromState = None
-fromZip = '610000'
-fromCountry = 'CN'
-isFromResident = False
-toCity = 'NEW YORK'
-toState = 'NY'
-toZip = '10001'
-toCountry = 'US'
-isToResident = True
-length = '1'
-width = '2'
-height = '3'
-weight = '10'
-pickUpDate = '20181001'
-numOfPkgs = 1
-deliveryDate = '20181015'
 
-def setVal(post, key, assigner):
-	if post[key] != '':
-		assigner = post[key]
-
-def initializeParas(post):
-	li = [['fc', fromCity],['fs', fromState],['fz', fromZip],['fco', fromCountry],
-	      ['ifr', isFromResident],['tc', toCity],['ts', toState],['tz', toZip],
-	      ['tco', toCountry],['itr', isToResident],['le', length],['wd', width],
-	      ['he', height],['pcd', pickUpDate],['dd', deliveryDate],['we', weight]]
-	for l in li:
-		setVal(post, l[0], l[1])
-	if post['nop'] != '':
-		numOfPkgs = int(post['nop'])
-
-def addAddress(root, city, state, zipCode, country, isResidential):
+def addAddress(root, city, state, zipCode, country, isResidential, post):
 	address = SubElement(root,'Address')
 	if city != None:
 		c = SubElement(address,'City')
-		c.text = city
+		if root.tag == 'Shipper':
+			c.text = city
+		else:
+			c.text = post[city]
 	if state != None:
 		s = SubElement(address,'StateProvinceCode')
-		s.text = state
+		if root.tag == 'Shipper':
+			s.text = state
+		else:
+			s.text = post[state]
 	z = SubElement(address,'PostalCode')
-	z.text = zipCode
+	if root.tag == 'Shipper':
+		z.text = zipCode
+	else:
+		z.text = post[zipCode]
+
 	cou = SubElement(address,'CountryCode')
-	cou.text = country
-	if isResidential:
+	if root.tag == 'Shipper':
+		z.text = country
+	else:
+		cou.text = post[country]
+
+	if root.tag != 'Shipper' and post[isResidential] == 'residential':
 		residentChild = SubElement(address,'ResidentialAddressIndicator')
 		residentChild.text = ' '
 
@@ -79,7 +61,7 @@ def makeAccessXML(licenseNum, userId, password):
 	ps.text = password
 	return tostring(r).decode("utf-8") 
 
-def makeRateRequestXML(code, isSatDelivered):
+def makeRateRequestXML(code, isSatDelivered, post):
 	r = Element('RatingServiceSelectionRequest')
 	r.set('xml:lang', 'en-US')
 
@@ -100,22 +82,22 @@ def makeRateRequestXML(code, isSatDelivered):
 
 	shipment = SubElement(r, 'Shipment')
 	shipper = SubElement(shipment, 'Shipper')
-	addAddress(shipper, shipperCity, shipperState, shipperZip, shipperCountry, isShipperResident)
+	addAddress(shipper, shipperCity, shipperState, shipperZip, shipperCountry, isShipperResident, post)
 	if isSatDelivered:
 		sso = SubElement(shipment, 'ShipmentServiceOptions')
 		sat = SubElement(sso, 'SaturdayDelivery')
 		sat.text = ' '
 
 	to = SubElement(shipment, 'ShipTo')
-	addAddress(to, toCity, toState, toZip, toCountry, isToResident)
+	addAddress(to, 'tc', 'ts', 'tz', 'tco', 'itr', post)
 	shipFrom = SubElement(shipment, 'ShipFrom')
-	addAddress(shipFrom, fromCity, fromState, fromZip, fromCountry, isFromResident)
+	addAddress(shipFrom, 'fc', 'fs', 'fz', 'fco', 'ifr', post)
 
 	serv = SubElement(shipment, 'Service')
 	co1 = SubElement(serv, 'Code')
 	co1.text = code
 
-	for i in range(numOfPkgs):
+	for i in range(int(post['nop'])):
 		pck = SubElement(shipment, 'Package')
 		tp = SubElement(pck, 'PackagingType')
 		co2 = SubElement(tp, 'Code')
@@ -123,49 +105,47 @@ def makeRateRequestXML(code, isSatDelivered):
 		dms = SubElement(pck, 'Dimensions')
 		meas = SubElement(dms, 'UnitOfMeasurement')
 		co3 = SubElement(meas, 'Code')
-		if fromCountry == 'CN':
+		if post['fco'] == 'CN':
 			co3.text = 'CM'
 		else:
 			co3.text = 'IN'
 		le = SubElement(dms, 'Length')
-		le.text = length
+		le.text = post['le']
 		wid = SubElement(dms, 'Width')
-		wid.text = width
+		wid.text = post['wd']
 		hi = SubElement(dms, 'Height')
-		hi.text = height
+		hi.text = post['he']
 
 		pckWei = SubElement(pck, 'PackageWeight')
 		meas1 = SubElement(pckWei, 'UnitOfMeasurement')
 		co4 = SubElement(meas1, 'Code')
-		if fromCountry == 'CN':
+		if post['fco'] == 'CN':
 			co4.text = 'KGS'
 		else:
 			co4.text = 'LBS'
 		wei = SubElement(pckWei, 'Weight')
-		wei.text = weight
+		wei.text = post['we']
 
 	return version+makeAccessXML(licenseNum,userId,password)+version+tostring(r).decode("utf-8") 
 
-
-
-def addAddress2Transit(root, city, state, zipCode, country, isResidential):
+def addAddress2Transit(root, city, state, zipCode, country, isResidential, post):
 	addreFormat = SubElement(root, 'AddressArtifactFormat')
-	if city != None:
+	if post[city] != None:
 		c = SubElement(addreFormat, 'PoliticalDivision2')
-		c.text = city
-	if state != None:
+		c.text = post[city]
+	if post[state] != None:
 		s = SubElement(addreFormat, 'PoliticalDivision1')
-		s.text = state
+		s.text = post[state]
 	z = SubElement(addreFormat, 'PostcodePrimaryLow')
-	z.text = zipCode
+	z.text = post[zipCode]
 	con = SubElement(addreFormat, 'CountryCode')
-	con.text = country
-	if isResidential:
+	con.text = post[country]
+	if post[isResidential] == 'residential':
 		resdi = SubElement(addreFormat, 'ResidentialAddressIndicator')
 		resdi.text = ' '
 
 
-def makeTimeRequestXml():
+def makeTimeRequestXml(post):
 	r = Element('TimeInTransitRequest')
 	r.set('xml:lang', 'en-US')
 
@@ -177,18 +157,19 @@ def makeTimeRequestXml():
 	ra.text = 'TimeInTransit'
 	
 	traFrom = SubElement(r, 'TransitFrom')
-	addAddress2Transit(traFrom, fromCity, fromState, fromZip, fromCountry, isFromResident)
+	addAddress2Transit(traFrom, 'fc', 'fs', 'fz', 'fco', 'ifr', post)
 	traTo = SubElement(r, 'TransitTo')
-	addAddress2Transit(traTo, toCity, toState, toZip, toCountry, isToResident)
+	addAddress2Transit(traTo, 'tc', 'ts', 'tz', 'tco', 'itr', post)
 
 	pkDate = SubElement(r, 'PickupDate')
-	pkDate.text = pickUpDate
+	pd = post['pcd'].replace('-','')
+	pkDate.text = pd
 	maxSize = SubElement(r, 'MaximumListSize')
 	maxSize.text = '35'
 
 	invoice = SubElement(r, 'InvoiceLineTotal')
 	currency = SubElement(invoice, 'CurrencyCode')
-	if fromCountry == 'CN':
+	if post['fco'] == 'CN':
 		currency.text = 'RMB'
 	else:
 		currency.text = 'USD'
@@ -198,27 +179,27 @@ def makeTimeRequestXml():
 	sw = SubElement(r, 'ShipmentWeight')
 	unit = SubElement(sw, 'UnitOfMeasurement')
 	co = SubElement(unit, 'Code')
-	if fromCountry == 'CN':
+	if post['fco'] == 'CN':
 		co.text = 'KGS'
 	else:
 		co.text = 'LBS'	
 	wei = SubElement(sw, 'Weight')
-	wei.text = weight
+	wei.text = post['we']
 
 	return version+makeAccessXML(licenseNum,userId,password)+version+tostring(r).decode("utf-8") 
 
-def getOptionWithTime(): 
-	data = makeTimeRequestXml()
-	#print(data)	
+def getOptionWithTime(post): 
+	data = makeTimeRequestXml(post)
 	httpresq = Request(url="https://onlinetools.ups.com/ups.app/xml/TimeInTransit", data=data.encode('utf_8'), headers={'Content-Type': 'application/x-www-form-urlencoded'})
 	response = urlopen(httpresq)
 	return_values = response.read()
+	#print(return_values)
 	r = fromstring(return_values)
 	li = []    # list of [des, isSatDelivered, btds, hdc, deldate, time, dow, totalDays]
 	if r.find('Response').find('ResponseStatusCode').text == '0': 
 		print(r.find('Response').find('Error').find('ErrorDescription').text) 
 	elif r.find('TransitResponse') == None:
-		print('No options for current origin to destination')
+		print('Errors for city, state, country or zipCode')
 	else:
 		for ss in r.find('TransitResponse').findall('ServiceSummary'):
 		  ser = ss.find('Service')
@@ -241,11 +222,10 @@ def getOptionWithTime():
 	return li
 
 
-def makeServiceWithPrice(optionList):
+def makeServiceWithPrice(optionList, post):
 	for i in range(len(optionList)-1, -1, -1):
-		#print(opt[0])
 		if optionList[i][0] in o2c:			
-			xml = makeRateRequestXML(o2c[optionList[i][0]], optionList[i][1]).encode('utf_8')
+			xml = makeRateRequestXML(o2c[optionList[i][0]], optionList[i][1], post).encode('utf_8')
 			httpresq = Request(url="https://onlinetools.ups.com/ups.app/xml/Rate", data=xml, headers={'Content-Type': 'application/x-www-form-urlencoded'})
 			response = urlopen(httpresq)
 			return_values = response.read()
@@ -255,7 +235,7 @@ def makeServiceWithPrice(optionList):
 
 			r = fromstring(return_values)
 			charge = r.find('RatedShipment').find('TotalCharges').find('MonetaryValue').text
-			if fromCountry == 'US' and toCountry == 'US':
+			if post['fco'] == 'US' and post['tco'] == 'US':
 				charge = r.find('RatedShipment').find('TransportationCharges').find('MonetaryValue').text
 			optionList[i].append(charge)
 			currency = r.find('RatedShipment').find('TotalCharges').find('CurrencyCode').text
@@ -263,14 +243,13 @@ def makeServiceWithPrice(optionList):
 		else:
 			del optionList[i]
 
-
-def getMinOption(optionList):
+def getMinOption(optionList, post):
 	onTime = False	
 	beforeList = []
 	minPrice = 99999999.0
 	afterList = []
 	minDateDiff = -100
-	expectDate = parse(deliveryDate)
+	expectDate = parse(post['dd'])
 	for opt in optionList:
 		actualDate = parse(opt[4])
 		diffStr = str(expectDate - actualDate).split(' ')[0]
@@ -290,7 +269,7 @@ def getMinOption(optionList):
 			afterList.append(temp)
 
 	if len(beforeList) == 0 and len(afterList) == 0:
-		return [['No option for this pickUpDate and deliveyDate']]
+		return ['No option for this pickUpDate and deliveyDate']
 
 	if onTime:
 		for i in range(len(beforeList)-1, -1, -1):
@@ -302,5 +281,9 @@ def getMinOption(optionList):
 			if float(afterList[j][10]) < minDateDiff:
 				del afterList[j]
 		return afterList[0]
+
+
+
+
 
 

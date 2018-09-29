@@ -218,7 +218,7 @@ def queryProof(PONumber):
 		result['Customer Name'] = r["Customer Name"]
 		result['Item Number'] = r['Nexus Identity Item Number']
 		result['Quantity'] = r['Quantity']
-		result['Size/Capacity'] = r['Size']
+		#result['Size/Capacity'] = r['Size']
 		result['Item Color'] = r['Product Color']
 		result['Material'] = r['Material']
 		result['Imprint Method'] = r["Imprint Method"]
@@ -342,27 +342,6 @@ def ChinaEmployeeUpdatePicture(orderID, path):
 	            ':val1': path
 	    }
 	)
-
-def queryProof(PONumber):
-	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
-	table = dynamodb.Table('Order')     
-	response = table.scan(
-	    FilterExpression=Attr('PO Number').eq(PONumber)
-	)
-	result = {}
-	if not len(response['Items']) == 0:
-		r = response['Items'][0]
-		result['PO Number']	= r['PO Number']
-		result['Customer Name'] = r["Customer Name"]
-		result['Item Number'] = r['Nexus Identity Item Number']
-		result['Quantity'] = r['Quantity']
-		result['Size/Capacity'] = r['Size']
-		result['Item Color'] = r['Product Color']
-		result['Material'] = r['Material']
-		result['Imprint Method'] = r["Imprint Method"]
-		result['Imprint Color'] = r["Imprint Color"]
-		result['Attached_picture'] = r['Attached_picture']
-	return result
 
 def employeeQueryInvoice(invoiceNumber):
 	# load "Invoice" table
