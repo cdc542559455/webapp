@@ -245,7 +245,7 @@ def StaffInChinaOrderInDetails(request):
         print("this is not POST")
 
 
-    return render(request, 'basic_app/staff_in_China_order_detail.html', {'dic':dic, 'pic_src':pic_src , 'uploadform':uploadform} )
+    return render(request, 'basic_app/staff_in_China_order_detail.html', {'dic':dic, 'pic_src':pic_src} )
 
 @login_required
 @supervisor_or_staffInUSA_required
