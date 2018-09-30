@@ -123,43 +123,27 @@ def CreateInvoice(request):
     secondpart = None
     result = ""
     invoiceNumber = request.POST.get('invoiceNumber', '-1')
+    idx = '-1'
     idx = request.POST.get('idx', '-1')
-    print(idx)
     if request.method == 'POST':
         input = request.POST.dict()
         del input['csrfmiddlewaretoken']
-        print("*************************")
         if (invoiceNumber == '-1'):
             weight = request.POST.get('wd', '-1')
-            print("*************************")
-            print(weight)
-            print("*************************")
             if (weight != '-1'):
                 li = getOptionWithTime(request.POST)
-                print("*****************************")
-                print(li)
-                print("*****************************")
-                makeServiceWithPrice(li, request.POST)
-                res = getMinOption(li, request.POST)
-                print(res)
-                print("*****************************")
-                if len(res) > 1:
-                    result = res[0]+', deliveried by '+res[4]+' at '+res[5]+' with '+res[8]+' '+res[9]
-                if (idx != '-1'):
-                    print("********************************")
-                    print("inside of filling")
-                    print(idx)
-                    print("********************************")
-                    firstpart,secondpart = employeeQueryInvoice(idx)
-                    print(firstpart)
-                    print(secondpart)
-                    print("********************************")
-                    namelist = list(range(8,8+3*len(secondpart)))
-                    namelist = namelist[::3]
-                    secondpart = dict(zip(namelist,secondpart))
-                print("out of filling")
+                if li:
+                    makeServiceWithPrice(li, request.POST)
+                    res = getMinOption(li, request.POST)
+                    if len(res) > 1:
+                        result = res[0]+', deliveried by '+res[4]+' at '+res[5]+' with '+res[8]+' '+res[9]
+                    if (idx != '-1' and idx):
+                        firstpart,secondpart = employeeQueryInvoice(idx)
+                        if ( firstpart and secondpart) :
+                            namelist = list(range(8,8+3*len(secondpart)))
+                            namelist = namelist[::3]
+                            secondpart = dict(zip(namelist,secondpart))
             else:
-                print("don't have correct address")
                 inputlist = list(input.values())
                 firstpart = inputlist[:7]
                 secondpart = inputlist[7:]
@@ -213,8 +197,6 @@ def StaffInChinaOrderInDetails(request):
     if request.method == 'POST':
         OrderNum = request.POST.get('orderID','-1')
         if (OrderNum != '-1'):      
-            print(chinaQuery('666'))
-            print(type(chinaQuery('666')))
             dic = chinaQuery(OrderNum)
             if (dic):
                 pic_src = dic['Attached_picture']
@@ -252,6 +234,8 @@ def proofDetailsView(request):
         dic = queryProof(Num)
         if (dic != None):
             pic_src = dic['Attached_picture']
+            if (pic_src):
+                del dic['Attached_picture']
             dic = dict(itertools.islice(dic.items(),1, len(dic)))
     else:
         pass

@@ -14,62 +14,90 @@
     <table class = "table table-bordered" >
         <thead class="thead-dark" >
             <tr>
-                <th scope="col">Shiip From</th>
-                <th scope="col">Ship To</th>
-                <th scope="col">Package Information</th>
+                <th scope="col">Ship From</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td>
-                    City <input type="text" name="fc"> 
+                    City <input type="text" name="fc" id="auto"required> 
                 </td>
                 <td>
-                    City <input type="text" name="tc">
+                    State <input type="text" name="fs" id="fromstate" required>
                 </td>
-                <td>
-                    Lenth <input type="number" name="le" required>
-                </td>
-                </tr>
-                <tr>
-                    <td>
-                    State <input type="text" name="fs">
-                </td>
-                    <td>
-                    State <input type="text" name="ts">
-                    </td>
-                    <td>Width <input type="number" name="wd" required></td>
-                </tr>
-                    <tr>
-                        <td>
-                            Country Code <input type="text" name="fco" required>
-                        </td>
-                        <td>
-                            Country Code <input type="text" name="tco" required>
-                        </td>
-                        <td>Height <input type="number" name="he" required></td>
-                    </tr>
-                    <tr>
-                        <td>Zip Code <input type="text" name="fz" required></td>
-                        <td>Zip Code <input type="text" name="tz" required></td>
-                        <td>Number of Package <input type="number" name="nop" required></td>
-                    </tr>
-                    <tr>
-                        <td>Status <select name="ifr" >
-                            <option value="residential">residential</option>
-                            <option value="commercial">commercial</option>
-                        </select></td>
-                        <td>Status  <select name="itr" >
-                            <option value="residential">residential</option>
-                            <option value="commercial">commercial</option>
-                        </select></td>
-                        <td>Pickup Date <input type="date", name="pcd"></td>
-                        <tr>
-                            <td>Invoice # <input type="text"name="idx" value="{{firstpart.0}}"></td>
-                            <td>Weight <input type="number" name="we" required></td>
-                            <td>Delivered Date <input type="date", name="dd"></td>
-                    </tr>
+                <td>Country Code <select id = "fco" name="fco" >
+                    <option value="US">US</option>
+                    <option value="CN">CN</option>
+                </select></td>
             </tr>
+            <tr>
+                <td>Zip Code <input type="number" name="fz" maxlength="6" required></td>
+                <td>Status <select name="ifr" >
+                    <option value="residential">residential</option>
+                    <option value="commercial">commercial</option>
+                </select></td>
+            </tr>
+        </tbody>
+    </table>
+    <table class = "table table-bordered" >
+        <thead class="thead-dark" >
+            <tr>
+                <th scope="col">Shiip To</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    City <input type="text" name="tc" id= 'auto2' required>
+                </td>
+                <td>
+                    State <input type="text" name="ts" id="tostate"required>
+                </td>
+                <td>Country Code  <select name="tco" id="tco" >
+                    <option value="US">US</option>
+                    <option value="CN">CN</option>
+                </select></td>
+            </tr>
+            <tr>
+                <td>Zip Code <input type="number" name="tz" required></td>
+                <td>Status  <select name="itr" >
+                    <option value="residential">residential</option>
+                    <option value="commercial">commercial</option>
+                </select></td>
+            </tr>
+        </tbody>
+    </table>
+    <table class = "table table-bordered" >
+        <thead class="thead-dark" >
+            <tr>
+                <th scope="col">Package Information</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+            <tr>
+                <td>Width <input type="number" name="wd" required></td>
+                <td>
+                Lenth <input type="number" name="le" required>
+                </td>
+                <td>Height <input type="number" name="he" required></td>
+            </tr>
+                
+            <tr>
+                <td>Weight <input type="number" name="we" required></td>
+                <td>Number of Package <input type="number" name="nop" required></td>
+            </tr>
+            <tr>
+                <td>Pickup Date <input type="date", name="pcd"></td>
+                <td>Delivered Date <input type="date", name="dd"></td>
+                <td>Assoicated Invoice # <input type="text"name="idx" value="{{firstpart.0}}"></td>
+            </tr>
+        <tbody>
+
         </tbody>
     </table>
     <div class="container border">
@@ -157,4 +185,69 @@
     </br>
     </br>
     </br>
+    <script>
+            // This example displays an address form, using the autocomplete feature
+            // of the Google Places API to help users fill in the information.
+      
+            // This example requires the Places library. Include the libraries=places
+            // parameter when you first load the API. For example:
+            // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
+            var autocomplete, autocomplete2;
+            function initAutocomplete() {
+                // Create the autocomplete object, restricting the search to geographical
+                // location types.
+                autocomplete = new google.maps.places.Autocomplete(
+                  /** @type {!HTMLInputElement} */(document.getElementById('auto')),
+                    {types: ['geocode']});
+                // When the user selects an address from the dropdown, populate the address
+                // fields in the form.
+                autocomplete.addListener('place_changed', fillInAddress);
+
+                autocomplete2 = new google.maps.places.Autocomplete(
+                  /** @type {!HTMLInputElement} */(document.getElementById('auto2')),
+                    {types: ['geocode']});
+                autocomplete2.addListener('place_changed', fillInAddress2);
+            }
+
+            function fillInAddress() {
+                // Get the place details from the autocomplete object.
+                var place = autocomplete.getPlace();
+                document.getElementById('auto').value = '';
+                document.getElementById("tostate").value = '';
+                console.log(place.address_components.length);
+                // console.log((place.address_components);
+                console.log(place.address_components[0]['short_name']);
+                console.log(place.address_components[1]['short_name']);
+                console.log(place.address_components[2]['short_name']);
+                if (place.address_components.length == 4){
+                    document.getElementById('fco').value = 'US';
+                    document.getElementById('auto').value = place.address_components[0]['short_name'];
+                    document.getElementById("fromstate").value = place.address_components[2]['short_name'];
+                    } else if (place.address_components.length == 3) {
+                    document.getElementById('fco').value = 'CN';
+                    document.getElementById('auto').value = place.address_components[0]['short_name'];
+                    document.getElementById("fromstate").value = place.address_components[1]['short_name'];
+                }
+            }
+
+            function fillInAddress2() {
+                // Get the place details from the autocomplete object.
+                var place = autocomplete2.getPlace();
+                document.getElementById('auto2').value = '';
+                document.getElementById("tostate").value = '';
+                console.log(place.address_components.length);
+                // console.log((place.address_components);
+                if (place.address_components.length == 4){
+                    document.getElementById('tco').value = 'US';
+                    document.getElementById('auto2').value = place.address_components[0]['short_name'];
+                    document.getElementById("tostate").value = place.address_components[2]['short_name'];
+                    } else if (place.address_components.length == 3) {
+                    document.getElementById('tco').value = 'CN';
+                    document.getElementById('auto2').value = place.address_components[0]['short_name'];
+                    document.getElementById("tostate").value = place.address_components[1]['short_name'];
+                }
+            }
+        </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBYLIf262Crle3mcmG31LzUuygNSSQShn4&libraries=places&callback=initAutocomplete"
+    async defer></script>
 {% endblock %}
