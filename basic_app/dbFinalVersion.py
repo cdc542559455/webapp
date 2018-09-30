@@ -312,4 +312,4 @@ def ChinaEmployeeUpdatePicture(orderID, path):
 
 if __name__ == '__main__':
 	print()
-	print((chinaQuery("333333333333333")))
+	print((chinaQuery("qqq")))
