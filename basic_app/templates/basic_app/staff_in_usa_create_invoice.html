@@ -213,7 +213,7 @@
                 // Get the place details from the autocomplete object.
                 var place = autocomplete.getPlace();
                 document.getElementById('auto').value = '';
-                document.getElementById("tostate").value = '';
+                document.getElementById("fromstate").value = '';
                 console.log(place.address_components.length);
                 // console.log((place.address_components);
                 console.log(place.address_components[0]['short_name']);
