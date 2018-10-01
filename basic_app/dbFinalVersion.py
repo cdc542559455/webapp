@@ -1,5 +1,6 @@
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
+from botocore.client import Config
 import itertools
 
 key = "AKIAJZPCRO4GVYOL3SJQ"
@@ -233,21 +234,8 @@ def partialScanProof():
 			sr.append(r['Quantity'])
 			result.append(sr)
 	return result
-		
-		
-def deleteItem(tableName, primaryKey):
-	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
-	table = dynamodb.Table(tableName)
-	k = {}
-	if tableName is "Invoice":
-		k["Invoice #"] = str(primaryKey)
-	elif tableName is "Order":
-		k["Order Number"] = str(primaryKey) 
-	else:
-		return
-	table.delete_item(Key = k)
-	
-	
+
+
 def partialEmployeeScanOrder():
 	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
 	table = dynamodb.Table('Order')
@@ -285,9 +273,6 @@ def employeeQueryInvoice(invoiceNumber):
                         result2.append(detail[:3])
         return result, result2
 
-# --------------------------------------------------------------------------------------------------------------------- #	              
-
-
 def ChinaEmployeeUpdatePicture(orderID, path):
 	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
 	table = dynamodb.Table('Order')
@@ -310,6 +295,40 @@ def ChinaEmployeeUpdatePicture(orderID, path):
 		return str(orderID)
 	
 
+def deleteItem(tableName, primaryKey):
+	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
+	s3 = boto3.resource('s3',aws_access_key_id=key,aws_secret_access_key=secret,config=Config(signature_version='s3v4')) 
+	table = dynamodb.Table(tableName)
+	k = {}
+	if tableName is "Invoice":
+		k["Invoice #"] = str(primaryKey)
+	elif tableName is "Order":
+		k["Order Number"] = str(primaryKey) 
+		tempPicLink = showFullOrder(str(primaryKey))[0]
+		if len(tempPicLink) > 1:
+			picLink = tempPicLink[13]
+			if picLink is not None:
+				counter = 0
+				for x in deleteHelper():				
+					if (x[0] != "None") and (x[0] == picLink):
+						counter+=1
+				if counter == 1:					
+					s3.Object('nicealbum', picLink.split("/")[len(picLink.split("/")) - 1]).delete()				
+	else:
+		return
+	table.delete_item(Key = k)
+	
+	
+def deleteHelper():
+	dynamodb = boto3.resource('dynamodb', aws_access_key_id=key, aws_secret_access_key=secret,region_name=region)
+	table = dynamodb.Table('Order')
+	result = []
+	if not len(table.scan()['Items']) == 0:
+		for r in table.scan()['Items']:
+			oneOrder = []
+			oneOrder.append(str(r['Attached_picture']))
+			result.append(oneOrder)
+	return result	
+
 if __name__ == '__main__':
-	print()
-	print((chinaQuery("qqq")))
+	pass

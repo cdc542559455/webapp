@@ -96,6 +96,11 @@
                 <td>Delivered Date <input type="date", name="dd"></td>
                 <td>Assoicated Invoice # <input type="text"name="idx" value="{{firstpart.0}}"></td>
             </tr>
+            <script>
+                var tod = new Date().toISOString().split('T')[0];
+                document.getElementsByName("pcd")[0].setAttribute('min', tod);
+                document.getElementsByName("dd")[0].setAttribute('min', tod); 
+            </script>
         <tbody>
 
         </tbody>
