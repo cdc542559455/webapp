@@ -25,7 +25,7 @@ SECRET_KEY = 'j&wblwbdq(i*x+r&l0y96-wv%c5bjopqbgix(0s*i#o32%5r*b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['dazhaxia.pythonanywhere.com']
 
 
 # Application definition
@@ -129,6 +129,8 @@ AUTH_USER_MODEL = 'basic_app.CustomUSer'
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = '/home/dazhaxia/statuc'
 
 # MEDIA INFORMATION:
 
