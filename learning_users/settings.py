@@ -130,7 +130,7 @@ AUTH_USER_MODEL = 'basic_app.CustomUSer'
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = '/home/dazhaxia/statuc'
+STATIC_ROOT = '/home/dazhaxia/webapp/statuc'
 
 # MEDIA INFORMATION:
 
