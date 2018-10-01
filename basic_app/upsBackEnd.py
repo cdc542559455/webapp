@@ -193,13 +193,12 @@ def getOptionWithTime(post):
 	httpresq = Request(url="https://onlinetools.ups.com/ups.app/xml/TimeInTransit", data=data.encode('utf_8'), headers={'Content-Type': 'application/x-www-form-urlencoded'})
 	response = urlopen(httpresq)
 	return_values = response.read()
-	#print(return_values)
 	r = fromstring(return_values)
 	li = []    # list of [des, isSatDelivered, btds, hdc, deldate, time, dow, totalDays]
 	if r.find('Response').find('ResponseStatusCode').text == '0': 
-		print(r.find('Response').find('Error').find('ErrorDescription').text) 
+		li.append([r.find('Response').find('Error').find('ErrorDescription').text]) 
 	elif r.find('TransitResponse') == None:
-		print('Errors for city, state, country or zipCode')
+		li.append(['Errors for city, state, country or zipCode'])
 	else:
 		for ss in r.find('TransitResponse').findall('ServiceSummary'):
 		  ser = ss.find('Service')
@@ -222,7 +221,10 @@ def getOptionWithTime(post):
 	return li
 
 
-def makeServiceWithPrice(optionList, post):
+def makeServiceWithPrice(optionList, post):	
+	if len(optionList) == 1 and len(optionList[0]) == 1:
+		return optionList
+	err = ''
 	for i in range(len(optionList)-1, -1, -1):
 		if optionList[i][0] in o2c:			
 			xml = makeRateRequestXML(o2c[optionList[i][0]], optionList[i][1], post).encode('utf_8')
@@ -231,7 +233,8 @@ def makeServiceWithPrice(optionList, post):
 			return_values = response.read()
 			y=BeautifulSoup(return_values,'html.parser').ratingserviceselectionresponse
 			if y != None and y.response.responsestatuscode.string=='0':
-				continue
+				err = y.response.error.errordescription.string
+				break				
 
 			r = fromstring(return_values)
 			charge = r.find('RatedShipment').find('TotalCharges').find('MonetaryValue').text
@@ -242,14 +245,19 @@ def makeServiceWithPrice(optionList, post):
 			optionList[i].append(currency)
 		else:
 			del optionList[i]
+	if err != '':
+		return [[err]]
 
 def getMinOption(optionList, post):
+	if len(optionList) == 1 and len(optionList[0]) == 1:
+		return optionList[0]
 	onTime = False	
 	beforeList = []
 	minPrice = 99999999.0
 	afterList = []
 	minDateDiff = -100
 	expectDate = parse(post['dd'])
+
 	for opt in optionList:
 		actualDate = parse(opt[4])
 		diffStr = str(expectDate - actualDate).split(' ')[0]
@@ -269,7 +277,7 @@ def getMinOption(optionList, post):
 			afterList.append(temp)
 
 	if len(beforeList) == 0 and len(afterList) == 0:
-		return ['No option for this pickUpDate and deliveyDate']
+		return ['No delivery options for this pickUpDate and deliveyDate']
 
 	if onTime:
 		for i in range(len(beforeList)-1, -1, -1):
