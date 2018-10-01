@@ -247,6 +247,7 @@ def makeServiceWithPrice(optionList, post):
 			del optionList[i]
 	if err != '':
 		return [[err]]
+	return optionList
 
 def getMinOption(optionList, post):
 	if len(optionList) == 1 and len(optionList[0]) == 1:
@@ -264,7 +265,7 @@ def getMinOption(optionList, post):
 		diff = 0
 		if diffStr != '0:00:00':
 			diff = int(diffStr)
-		if diff >= 0 and diff <= 3:
+		if diff >= 0:
 			onTime = True
 			if float(opt[8]) < minPrice:
 				minPrice = float(opt[8])

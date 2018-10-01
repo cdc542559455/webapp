@@ -147,7 +147,9 @@ def CreateInvoice(request):
                 else:
                     li = getOptionWithTime(request.POST)
                     if li:
+                        print('before li:', li)
                         li = makeServiceWithPrice(li, request.POST)
+                        print('li in view: ', li)
                         res = getMinOption(li, request.POST)
                         if len(res) == 1:
                             result = res[0]
