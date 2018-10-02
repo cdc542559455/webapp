@@ -20,6 +20,9 @@ import itertools
 from django.contrib.staticfiles import finders
 
 from .upsBackEnd import getOptionWithTime, makeServiceWithPrice, getMinOption
+from dateutil.parser import parse
+from datetime import datetime
+from dateutil.tz import tzlocal
 # Create your views here.
 def home(request):
     return render(request,'basic_app/home.html')
@@ -131,18 +134,31 @@ def CreateInvoice(request):
         if (invoiceNumber == '-1'):
             weight = request.POST.get('wd', '-1')
             if (weight != '-1'):
-                li = getOptionWithTime(request.POST)
-                if li:
-                    makeServiceWithPrice(li, request.POST)
-                    res = getMinOption(li, request.POST)
-                    if len(res) > 1:
-                        result = res[0]+', deliveried by '+res[4]+' at '+res[5]+' with '+res[8]+' '+res[9]
-                    if (idx != '-1' and idx):
-                        firstpart,secondpart = employeeQueryInvoice(idx)
-                        if ( firstpart and secondpart) :
-                            namelist = list(range(8,8+3*len(secondpart)))
-                            namelist = namelist[::3]
-                            secondpart = dict(zip(namelist,secondpart))
+                if request.POST['tco'] == 'CN':
+                    result = 'Not available for delivery to China'
+                elif parse(request.POST['pcd']) >= parse(request.POST['dd']):
+                    result = 'Delivery date cannot be the same or earlier than pickup date'
+                elif request.POST['fc'] != '' and request.POST['tc'] != '' and request.POST['fc'].upper() == request.POST['tc'].upper():
+                    result = 'Delivery to same city is not supported'
+                elif request.POST['fz'] == request.POST['tz']:
+                    result = 'Delivery to same zipCode is not supported'
+                elif parse(str(datetime.now(tzlocal())).split(' ')[0]) == parse(request.POST['pcd']): # time to be handled
+                    result = 'Pickup date cannot be current date'
+                else:
+                    li = getOptionWithTime(request.POST)
+                    if li:
+                        li = makeServiceWithPrice(li, request.POST)
+                        res = getMinOption(li, request.POST)
+                        if len(res) == 1:
+                            result = res[0]
+                        if len(res) > 1:
+                            result = res[0]+', deliveried by '+res[4]+' at '+res[5]+' with '+res[8]+' '+res[9]
+                        if (idx != '-1' and idx):
+                            firstpart,secondpart = employeeQueryInvoice(idx)
+                            if ( firstpart and secondpart) :
+                                namelist = list(range(8,8+3*len(secondpart)))
+                                namelist = namelist[::3]
+                                secondpart = dict(zip(namelist,secondpart))
             else:
                 inputlist = list(input.values())
                 firstpart = inputlist[:7]
