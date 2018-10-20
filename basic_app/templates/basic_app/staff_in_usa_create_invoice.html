@@ -8,6 +8,11 @@
 <div class="jumbotron">
     <h2 id = "myh2">Create or Update Invoice</h2>
     <p class="lead" id="myp">Invoice form and information :</p>
+    <li>This page is available for both supervisor and staff in USA account types</li>
+    <li><Strong>Rating service</Strong> provides UPS account alive package rating which guaranteed user get 100% accurate alive rating price on specific delivery day from UPS service</li>
+    <li><Strong>Rating service</Strong> has algorithm to figure out the cheapest price according to users' typing conditions</li>
+    <li>In <Strong>Rating service</Strong>, we also apply google geolocation api to correct or auto-complete user's typing </li>
+    <li><Strong>Invoice Form</Strong> is fully flexible, user can add or delete (leave row blank) entries for order </li>
 </div>
 <form action="{% url 'basic_app:InvoiceCreate' %}" method="POST" >
     {% csrf_token %}
