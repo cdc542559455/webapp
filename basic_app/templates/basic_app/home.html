@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block body_block %}
 
 <div class="container">
@@ -17,7 +18,12 @@
 <div class="container">
   <h3>Order and Delivery</h3>
   <div class="row">
-    <div class="col-lg-3 col-4 px-0"><img class="img-thumbnail img-fluid" src="https://d2lm6fxwu08ot6.cloudfront.net/img-thumbs/960w/C5Y10KIIHA.jpg" alt=""></div>
+    <div class="col-lg-4 col-4 px-0"><img class="img-thumbnail img-fluid" src="https://d2lm6fxwu08ot6.cloudfront.net/img-thumbs/960w/C5Y10KIIHA.jpg" alt=""></div>
+    <div class="col-lg-4 col-4 px-0"><img class="img-thumbnail img-fluid" src="{% static 'image/graph2.jpg' %}" alt=""></div>
+    <div class="col-lg-4 col-4 px-0"><img class="img-thumbnail img-fluid" src="{% static 'image/graph3.jpg' %}" alt=""></div>
+    <div class="col-lg-4 col-4 px-0"><img class="img-thumbnail img-fluid" src="{% static 'image/graph4.jpg' %}" alt=""></div>
+    <div class="col-lg-4 col-4 px-0"><img class="img-thumbnail img-fluid" src="{% static 'image/graph5.jpg' %}" alt=""></div>
+    <div class="col-lg-4 col-4 px-0"><img class="img-thumbnail img-fluid" src="{% static 'image/graph7.jpg' %}" alt=""></div>
   </div>
 </div><!-- /.container -->
 

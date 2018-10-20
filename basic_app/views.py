@@ -14,11 +14,15 @@ from .forms import UploadFileForm
 from django.urls import reverse_lazy
 from django.views import generic
 from django.views.generic import CreateView, ListView, UpdateView, TemplateView
-from .dbFinalVersion import customerQueryProof, customerQueryInvoice, partialEmployeeScanOrder, customerQueryOrder, showFullOrder, ChinaEmployeeUpdatePicture, generateOrUpdateOrderAndProof, partialScanProof, queryProof, partialEmployeeScanInvoice, generateOrUpdateInvoice, employeeQueryInvoice, deleteItem
+from .dbFinalVersion import partialEmployeeScanOrder, customerQueryOrder, showFullOrder, ChinaEmployeeUpdatePicture, generateOrUpdateOrderAndProof,\
+partialScanProof, queryProof, partialEmployeeScanInvoice, generateOrUpdateInvoice, employeeQueryInvoice, deleteItem, customerQueryInvoice, chinaQuery, ChinaEmployeeUpdatePicture
 import itertools
 from django.contrib.staticfiles import finders
 
 from .upsBackEnd import getOptionWithTime, makeServiceWithPrice, getMinOption
+from dateutil.parser import parse
+from datetime import datetime
+from dateutil.tz import tzlocal
 # Create your views here.
 def home(request):
     return render(request,'basic_app/home.html')
@@ -85,6 +89,7 @@ def CustomerInUSAOrderPage(request):
 def OrderCreatePage(request):
     listpart = None
     newCompound = None
+    pic_src = None
     if request.method == 'POST':
         orderID = request.POST.get('orderID', '-1')
         input = request.POST.dict()
@@ -101,6 +106,7 @@ def OrderCreatePage(request):
 
         else:
             listpart,dictpart = showFullOrder(orderID)
+            pic_src = listpart[13]
             extraRow = len(dictpart)
             namelist = list(range(15,15+2*extraRow+1))
             namelist = namelist[::2]
@@ -111,7 +117,7 @@ def OrderCreatePage(request):
             newCompound = dict(zip(namelist,container))        
     else:
         pass
-    return render(request, 'basic_app/order_create.html', {'listpart':listpart, 'newCompound': newCompound })
+    return render(request, 'basic_app/order_create.html', {'listpart':listpart, 'newCompound': newCompound, 'pic_src':pic_src })
 
 @login_required
 @supervisor_or_staffInUSA_required
@@ -120,43 +126,40 @@ def CreateInvoice(request):
     secondpart = None
     result = ""
     invoiceNumber = request.POST.get('invoiceNumber', '-1')
+    idx = '-1'
     idx = request.POST.get('idx', '-1')
-    print(idx)
     if request.method == 'POST':
         input = request.POST.dict()
         del input['csrfmiddlewaretoken']
-        print("*************************")
         if (invoiceNumber == '-1'):
             weight = request.POST.get('wd', '-1')
-            print("*************************")
-            print(weight)
-            print("*************************")
             if (weight != '-1'):
-                li = getOptionWithTime(request.POST)
-                print("*****************************")
-                print(li)
-                print("*****************************")
-                makeServiceWithPrice(li, request.POST)
-                res = getMinOption(li, request.POST)
-                print(res)
-                print("*****************************")
-                if len(res) > 1:
-                    result = res[0]+', deliveried by '+res[4]+' at '+res[5]+' with '+res[8]+' '+res[9]
-                if (idx != '-1'):
-                    print("********************************")
-                    print("inside of filling")
-                    print(idx)
-                    print("********************************")
-                    firstpart,secondpart = employeeQueryInvoice(idx)
-                    print(firstpart)
-                    print(secondpart)
-                    print("********************************")
-                    namelist = list(range(8,8+3*len(secondpart)))
-                    namelist = namelist[::3]
-                    secondpart = dict(zip(namelist,secondpart))
-                print("out of filling")
+                if request.POST['tco'] == 'CN':
+                    result = 'Not available for delivery to China'
+                elif parse(request.POST['pcd']) >= parse(request.POST['dd']):
+                    result = 'Delivery date cannot be the same or earlier than pickup date'
+                elif request.POST['fc'] != '' and request.POST['tc'] != '' and request.POST['fc'].upper() == request.POST['tc'].upper():
+                    result = 'Delivery to same city is not supported'
+                elif request.POST['fz'] == request.POST['tz']:
+                    result = 'Delivery to same zipCode is not supported'
+                elif parse(str(datetime.now(tzlocal())).split(' ')[0]) == parse(request.POST['pcd']): # time to be handled
+                    result = 'Pickup date cannot be current date'
+                else:
+                    li = getOptionWithTime(request.POST)
+                    if li:
+                        li = makeServiceWithPrice(li, request.POST)
+                        res = getMinOption(li, request.POST)
+                        if len(res) == 1:
+                            result = res[0]
+                        if len(res) > 1:
+                            result = res[0]+', deliveried by '+res[4]+' at '+res[5]+' with '+res[8]+' '+res[9]
+                        if (idx != '-1' and idx):
+                            firstpart,secondpart = employeeQueryInvoice(idx)
+                            if ( firstpart and secondpart) :
+                                namelist = list(range(8,8+3*len(secondpart)))
+                                namelist = namelist[::3]
+                                secondpart = dict(zip(namelist,secondpart))
             else:
-                print("don't have correct address")
                 inputlist = list(input.values())
                 firstpart = inputlist[:7]
                 secondpart = inputlist[7:]
@@ -207,45 +210,24 @@ def StaffInChinaOrderInDetails(request):
     dic = None
     OrderNum = None
     pic_src = None
-    uploadform = UploadFileForm()
     if request.method == 'POST':
         OrderNum = request.POST.get('orderID','-1')
-        print(OrderNum)
-        if (OrderNum == '-1'):
-            form = UploadFileForm(request.POST, request.FILES)
-            path = finders.find(form['file'])
-            searched_locations = finders.searched_locations
-            print('***********************************')
-            print(path)
-            print('***********************************')
-            print(searched_locations)
-            print('***********************************')
-            print(form.data)
-            print('***********************************')
-            print(request.FILES)
-            print('***********************************')
-            print('***********************************')
-        if (pic_src != None):
-            ChinaEmployeeUpdatePicture('666', Path(pic_src).absolute())
-            print(Path(pic_src).absolute())
-            print('go through it')
-            return redirect(reverse('basic_app:StaffInChinaManagement'))
-            
+        if (OrderNum != '-1'):      
+            dic = chinaQuery(OrderNum)
+            if (dic):
+                pic_src = dic['Attached_picture']
+                dic = dict(itertools.islice(dic.items(),1, len(dic)))
+                del dic['Attached_picture']
         else:
-            print("this is POST Operation")
-            print(request.POST.dict())
-            print(type(OrderNum))
-            print(OrderNum)
-            if (OrderNum != '-1'):
-                dic = customerQueryOrder(OrderNum)
-                if (dic):
-                    pic_src = dic['Attached_picture']
-                    dic = dict(itertools.islice(dic.items(),1, len(dic)))
+            imageName = request.POST.get('image')
+            secondNum = request.POST.get('secondNumber')
+            ChinaEmployeeUpdatePicture(secondNum, imageName)
+            return redirect(reverse('basic_app:StaffInChinaManagement'))
     else:
         print("this is not POST")
 
 
-    return render(request, 'basic_app/staff_in_China_order_detail.html', {'dic':dic, 'pic_src':pic_src , 'uploadform':uploadform} )
+    return render(request, 'basic_app/staff_in_China_order_detail.html', {'dic':dic, 'pic_src':pic_src} )
 
 @login_required
 @supervisor_or_staffInUSA_required
@@ -268,6 +250,8 @@ def proofDetailsView(request):
         dic = queryProof(Num)
         if (dic != None):
             pic_src = dic['Attached_picture']
+            if (pic_src):
+                del dic['Attached_picture']
             dic = dict(itertools.islice(dic.items(),1, len(dic)))
     else:
         pass

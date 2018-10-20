@@ -9,16 +9,16 @@
       {% else %}
         <h1>Register Here</h1>
         <h3>Just fill out the form.</h3>
-
+      </div>
         <form enctype="multipart/form-data" method="POST">
           {% csrf_token %}
           {{ form.as_p }}
-          <input type="submit" name="" value="Register">
+          <input type="submit" name="" class="btn btn-info" value="Register">
         </form>
 
       {% endif %}
 
-    </div>
+   
 
   </div>
 

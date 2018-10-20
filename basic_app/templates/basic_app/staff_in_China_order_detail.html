@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 
+{% load static %}
+
+{% block javascript %}
+    <script src="{% static 'js/app.js' %}"></script>
+{% endblock %}
+
 {% block body_block %}
 <div class="container">
   <div class="jumbotron">
@@ -26,14 +32,20 @@
             {% endfor %}
           </tbody>
       </table>
-    <form method='post' action="#">
+    <form method='post' action="">
         {% csrf_token %}
         <table class = "table table-striped" >
             <tr>
-                {{uploadform.as_p}}
+                <th>
+                    <input name = "image" id="photoupload" type="file" accept="image/*">
+                </th>
+                <th>
+                    {% csrf_token %}
+                    <input type="button" id = "addphoto" onclick= addPhoto('myalbum') value="upload grpah" > </input>
+                </th>
             </tr>
             <tr>
-                <th></th>
+                <th>Confirm Order Number <input type="text" name="secondNumber" required ></th>
                 {% csrf_token %}
                 <th><input type="submit"  class="btn btn-info float-right" ></th>
             </tr>
